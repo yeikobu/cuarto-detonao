@@ -1,12 +1,12 @@
 export let roses = [
     {
         title: "Roja",
-        description: "Te amo ❤️",
+        description: "Te amo",
         img: "/Red.webp",
     },
     {
         title: "Anaranjada con Puntas Rojas",
-        description: "Te deseo 🔥",
+        description: "Te deseo",
         img: "/Orange.webp",
     },
     {

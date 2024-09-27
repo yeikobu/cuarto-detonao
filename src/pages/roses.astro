@@ -3,19 +3,20 @@ import Layout from "../layouts/Layout.astro"
 import SectionContainer from "../components/SectionContainer.astro"
 import Plus from "../components/icons/Plus.astro"
 import Minus from "../components/icons/Minus.astro"
+import NextButton from "../components/NextButton.astro"
 
-import { roses } from "../data/roses";
+import { roses } from "../data/roses"
 ---
 
 <Layout title="Elige tus rosas">
-    <main class="flex flex-col w-full justify-center items-center text-center py-20 px-4 space-y-32">
+    <main class="flex flex-col w-full justify-center items-center text-center px-4 pt-20 space-y-10">
         <SectionContainer>
             <h2 class="text-3xl font-semibold">Elige las rosas que quieres enviar a esa persona especial</h2>
 
             <div class="grid md:grid-cols-3 grid-cols-2 gap-x-4 gap-y-10 text-balance">
                 {
                     roses.map(({ title, description, img }) => (
-                        <div class="md:w-52 w-44 md:h-72 h-64 flex flex-col items-center justify-start space-y-2 text-pretty bg-black/40 rounded-xl">
+                        <div class="md:w-52 w-44 md:h-72 h-64 flex flex-col items-center justify-start space-y-2 text-pretty bg-black/30 hover:bg-black/40 rounded-2xl">
                             <img src={img} alt={title} class="md:w-52 w-44 min-h-32 md:min-h-36 object-cover rounded-2xl"/>
                             <div class="flex flex-col justify-between h-full">
                                 <div class="space-y-1">
@@ -26,7 +27,7 @@ import { roses } from "../data/roses";
                                 <!--Botones de aumentear y decrementar cantidad de rosas-->
                                 <div class="flex flex-row items-center justify-center space-x-2 text-center pb-3">
                                     <button id=`btn-minus-${title}` class="bg-purple-600/30 rounded-md p-1"> <Minus  class="size-4 text-xl font-black"/> </button>
-                                    <input type="text" placeholder="0" disabled id=`input-${title}` class="w-12 bg-black/70 px-4 rounded-lg text-center"/>
+                                    <input type="text" placeholder="0" disabled id=`input-${title}` class="w-12 px-4 rounded-lg text-center"/>
                                     <button id=`btn-plus-${title}` class="bg-purple-600/30 rounded-md p-1"> <Plus class="size-4 text-xl font-black"/> </button>
                                 </div>
                             </div>
@@ -35,28 +36,86 @@ import { roses } from "../data/roses";
                 }
             </div>
         </SectionContainer>
+
+        <section id="btn-next" class="md:w-3/5 w-full sticky bottom-5 flex flex-col justify-center gap-y-10 p-4 rounded-3xl bg-stone-950/85 backdrop-blur-md shadow-lg shadow-black ease-out transition-all translate-y-24 opacity-0 ">
+            <div class="flex flex-row items-center justify-between">
+                <div class="text-xs text-stone-400 flex flex-col items-start justify-center"> 
+                    <p>1 rosa x $2000</p>
+                    <p>3 rosas x $5000</p>
+                </div>
+                <div class="flex flex-col items-end justify-end gap-2">
+                    <p class="text-xs font-semibold">Rosas seleccionadas: 0</p>
+                    <p class="font-bold">Total: $2000</p>
+                </div>
+            </div>
+
+            <div class="flex justify-around items-center">
+                <div>
+                    <button><a href="" class="bg-gradient-to-r from-purple-900 via-purple-800 to-purple-700 text-transparent bg-clip-text font-bold">Sin foto</a></button>
+                </div>
+                <div>
+                    <NextButton title="Agregar foto" href="/roses" />
+                </div>
+            </div>
+		</section>
     </main>
 </Layout>
 
 <script>
     import { roses } from "../data/roses";
 
+    // Selecciona el botón "NextButton"
+    const btnNext = document.getElementById("btn-next") as HTMLElement;
+
+    // Función para comprobar si alguno de los inputs tiene un valor diferente de "0" o vacío
+    function checkInputs() {
+        let showButton = false;
+        
+        roses.forEach(({ title }) => {
+            const input = document.getElementById(`input-${title}`) as HTMLInputElement;
+            if (input.value !== "" && input.value !== "0") {
+                showButton = true; 
+            }
+        });
+
+        if (showButton) {
+            //Muestra el botón "NextButton"
+            btnNext.classList.remove("opacity-0");
+            btnNext.classList.remove("translate-y-24");
+            btnNext.classList.add("translate-y-0");
+        } else {
+            btnNext.classList.remove("translate-y-0");
+            btnNext.classList.add("translate-y-24");
+            btnNext.classList.add("opacity-0");
+        }
+    }
+
+    // Inicializa los botones y añade los event listeners
     roses.forEach(({ title }) => {
-        const btnPlus = document.getElementById(`btn-plus-${title}`) as HTMLButtonElement
-        const btnMinus = document.getElementById(`btn-minus-${title}`) as HTMLButtonElement
-        const input = document.getElementById(`input-${title}`) as HTMLInputElement
-        let value: number = 0
+        const btnPlus = document.getElementById(`btn-plus-${title}`) as HTMLButtonElement;
+        const btnMinus = document.getElementById(`btn-minus-${title}`) as HTMLButtonElement;
+        const input = document.getElementById(`input-${title}`) as HTMLInputElement;
 
+        let value: number = 0;
+
+        // Aumenta el valor al hacer clic en el botón de "plus"
         btnPlus.addEventListener("click", () => {
-            value++
-            input.value = value.toString()
+            value++;
+            input.value = value.toString();
+            checkInputs();
         });
 
+        // Disminuye el valor al hacer clic en el botón de "minus"
         btnMinus.addEventListener("click", () => {
-            value--
-            if (value < 0) value = 0
-            input.value = value.toString()
+            value--;
+            if (value < 0) value = 0; // Asegura que el valor no sea negativo
+            input.value = value.toString();
+            checkInputs(); 
         });
-    })
+    });
+
+    // Al cargar la página, oculta el botón "NextButton" si todos los inputs están vacíos o en "0"
+    checkInputs();
 </script>
+
 
