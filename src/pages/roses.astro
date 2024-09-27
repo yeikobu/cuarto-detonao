@@ -1,0 +1,70 @@
+---
+import Layout from "../layouts/Layout.astro"
+import SectionContainer from "../components/SectionContainer.astro"
+import Plus from "../components/icons/Plus.astro"
+import Minus from "../components/icons/Minus.astro"
+
+let roses = [
+    {
+        title: "Roja",
+        description: "Te amo ❤️",
+        img: "/Red.webp",
+    },
+    {
+        title: "Anaranjada con Puntas Rojas",
+        description: "Te deseo 🔥",
+        img: "/Orange.webp",
+    },
+    {
+        title: "Morada",
+        description: "Te admiro",
+        img: "/Purple.webp",
+    },
+    { 
+        title: "Azul",
+        description: "Eres maravillosamente diferente",
+        img: "/Blue.webp",
+    },
+    {
+        title: "Blanca",
+        description: "Lealtad",
+        img: "/White.webp",
+    },
+    {
+        title: "Amarilla",
+        description: "Un profesor como usted se lleva en el corazón para siempre",
+        img: "/Yellow.webp",
+    },
+]
+---
+
+<Layout title="Elige tus rosas">
+    <main class="flex flex-col w-full justify-center items-center text-center py-20 px-4 space-y-32">
+        <SectionContainer>
+            <h2 class="text-3xl font-semibold">Elige las rosas que quieres enviar a esa persona especial</h2>
+
+            <div class="grid grid-cols-2 gap-x-4 gap-y-10 text-balance">
+                {
+                    roses.map(({ title, description, img }) => (
+                        <div class="flex flex-col items-center justify-start space-y-2 text-pretty h-64 bg-black/40 rounded-xl">
+                            <img src={img} alt={title} class="w-44 min-h-32 object-cover rounded-2xl"/>
+                            <div class="flex flex-col justify-between h-full">
+                                <div class="space-y-1">
+                                    <p class="text-sm font-semibold">{title}</p>
+                                    <p class="text-xs">{description}</p>
+                                </div>
+                                <div class="flex flex-row items-center justify-center space-x-2 text-center pb-3">
+                                    <button class="bg-purple-600/30 rounded-md p-1"> <Minus  class="size-4 text-xl font-black"/> </button>
+                                    <input type="text" placeholder="0" class="w-12 bg-black/70 px-4 rounded-lg text-center"/>
+                                    <button class="bg-purple-600/30 rounded-md p-1"> <Plus class="size-4 text-xl font-black"/> </button>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    ))
+                }
+            </div>
+        </SectionContainer>
+    </main>
+</Layout>
+
