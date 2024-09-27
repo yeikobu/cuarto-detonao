@@ -1,25 +1,20 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import NextButton from '../components/NextButton.astro';
+import SectionContainer from '../components/SectionContainer.astro';
 import "@fontsource-variable/onest";
 ---
 
 <Layout title="Welcome to Astro.">
-	<main class="flex flex-col w-full justify-center items-center text-center py-20 px-10 space-y-20">
-		<section class="max-w-[350px] relative">
-			<img src="/Gengar.png" alt="Gengar" class="absolute bottom-20 size-20 object-contain z-20" />
-			<h1 class="relative text-5xl text-balance font-medium z-10">Las rosas del 
-				<span class="bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-transparent bg-clip-text font-bold">
-					IV° Detonao
-				</span>
-			</h1>
-		</section>
-		
-		<section class="flex flex-col items-center justify-center space-y-14 text-balance">
+	<main class="flex flex-col w-full justify-center items-center text-center py-20 px-10 space-y-32">
+		<SectionContainer>
 			<h2 class="text-3xl font-semibold">¡Reserva tu rosa ahora y sorprende con un gesto inolvidable!</h2>
 			<p class=" text-lg">¿Buscas una forma única de expresar lo que sientes por esa persona especial? ¡No dejes pasar esta oportunidad de sorprender con una rosa llena de significado!</p>
+		</SectionContainer>
+		
+		<SectionContainer>
 			<div class="flex flex-col items-center justify-center space-y-4 text-pretty">
-				<p>Cada color de rosa tiene un significado poderoso y único</p>
+				<p class="text-xl font-semibold">Cada color de rosa tiene un significado poderoso y único</p>
 				<ul class="space-y-2">
 					<li><span class="font-extrabold">Rojo:</span> Te amo ❤️</li>
 					<li><span class="font-extrabold">Anaranjado con Puntas Rojas:</span> Te deseo 🔥</li>
@@ -29,14 +24,18 @@ import "@fontsource-variable/onest";
 					<li><span class="font-extrabold">Amarillo:</span> Un profesor como usted se lleva en el corazón para siempre 💛</li>
 				</ul>
 			</div>
-			<p>Pero eso no es todo. Además de elegir el color perfecto para transmitir tu mensaje, también <span class="text-lg font-bold">puedes agregar una foto y dedicatoria</span> que acompañe tu gesto</p>
+		</SectionContainer>
+
+		<SectionContainer>
+			<p class="text-xl"><span class="text-2xl font-black">¡Pero eso no es todo!</span> Además de elegir el color perfecto para transmitir tu mensaje, también <span class="text-lg font-bold">puedes agregar una foto y dedicatoria</span> que acompañe tu gesto</p>
 			<p>Imagina la emoción de esa persona especial al recibir tu rosa, tu dedicatoria, ¡y una foto que haga el momento aún más inolvidable! Ya sea para un amigo, compañero o profesor, este es el gesto que marcará la diferencia</p>
 			<p>¡No dejes pasar esta oportunidad de crear un recuerdo único! Reserva tu rosa ahora y comparte un momento que será recordado para siempre </p>
-			
-			<div class="w-full sticky bottom-0 flex justify-center pb-6">
-				<NextButton title="Quiero reservar" href="/reserva" />
-			</div>
-		</section>
+		</SectionContainer>
+
+		<div class="w-full sticky bottom-0 flex justify-center pb-6">
+			<NextButton title="Quiero reservar" href="/reserva" />
+		</div>
+		
 	</main>
 </Layout>
 
