@@ -1,70 +1,47 @@
 ---
-import Card from '../components/Card.astro';
 import Layout from '../layouts/Layout.astro';
+import NextButton from '../components/NextButton.astro';
+import "@fontsource-variable/onest";
 ---
 
 <Layout title="Welcome to Astro.">
-	<main>
-		<h1>Las rosas del <span class="text-gradient">4° Detonao</span></h1>
+	<main class="flex flex-col w-full justify-center items-center text-center py-20 px-10 space-y-20">
+		<section class="max-w-[350px] relative">
+			<img src="/Gengar.png" alt="Gengar" class="absolute bottom-28 left-0 size-16 object-contain z-20" />
+			<h1 class="relative text-5xl text-balance font-medium z-10">Las rosas del 
+				<span class="bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-transparent bg-clip-text font-bold">
+					IV° Detonao
+				</span>
+			</h1>
+		</section>
 		
+		<section class="flex flex-col items-center justify-center space-y-14 text-balance">
+			<h2 class="text-3xl font-semibold">¡Reserva tu rosa ahora y sorprende con un gesto inolvidable!</h2>
+			<p class=" text-lg">¿Buscas una forma única de expresar lo que sientes por esa persona especial? ¡No dejes pasar esta oportunidad de sorprender con una rosa llena de significado!</p>
+			<div class="flex flex-col items-center justify-center space-y-4 text-pretty">
+				<p>Cada color de rosa tiene un significado poderoso y único</p>
+				<ul class="list-disc flex flex-col justify-start items-start text-start space-y-2">
+					<li><span class="font-extrabold">Rojo:</span> Te amo ❤️</li>
+					<li><span class="font-extrabold">Anaranjado con Puntas Rojas:</span> Te deseo 🔥</li>
+					<li><span class="font-extrabold">Morado:</span> Te admiro 💜</li>
+					<li><span class="font-extrabold">Azul:</span> Eres maravillosamente diferente 💙</li>
+					<li><span class="font-extrabold">Blanco:</span> Lealtad 🤍</li>
+					<li><span class="font-extrabold">Amarillo:</span> Un profesor como usted se lleva en el corazón para siempre 💛</li>
+				</ul>
+			</div>
+			<p>Pero eso no es todo. Además de elegir el color perfecto para transmitir tu mensaje, también <span class="text-lg font-bold">puedes agregar una foto y dedicatoria</span> que acompañe tu gesto</p>
+			<p>Imagina la emoción de esa persona especial al recibir tu rosa, tu dedicatoria, ¡y una foto que haga el momento aún más inolvidable! Ya sea para un amigo, compañero o profesor, este es el gesto que marcará la diferencia</p>
+			<p>¡No dejes pasar esta oportunidad de crear un recuerdo único! Reserva tu rosa ahora y comparte un momento que será recordado para siempre </p>
+			
+			<div class="w-full sticky bottom-0 flex justify-center pb-6">
+				<NextButton title="Quiero reservar" href="/reserva" />
+			</div>
+		</section>
 	</main>
 </Layout>
 
 <style>
-	main {
-		margin: auto;
-		padding: 1rem;
-		width: 800px;
-		max-width: calc(100% - 2rem);
-		color: white;
-		font-size: 20px;
-		line-height: 1.6;
-	}
-	.astro-a {
-		position: absolute;
-		top: -32px;
-		left: 50%;
-		transform: translatex(-50%);
-		width: 220px;
-		height: auto;
-		z-index: -1;
-	}
-	h1 {
-		font-size: 4rem;
-		font-weight: 700;
-		line-height: 1;
-		text-align: center;
-		margin-bottom: 1em;
-	}
-	.text-gradient {
-		background-image: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-	}
-	.instructions {
-		margin-bottom: 2rem;
-		border: 1px solid rgba(var(--accent-light), 25%);
-		background: linear-gradient(rgba(var(--accent-dark), 66%), rgba(var(--accent-dark), 33%));
-		padding: 1.5rem;
-		border-radius: 8px;
-	}
-	.instructions code {
-		font-size: 0.8em;
-		font-weight: bold;
-		background: rgba(var(--accent-light), 12%);
-		color: rgb(var(--accent-light));
-		border-radius: 4px;
-		padding: 0.3em 0.4em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent-light));
-	}
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 2rem;
-		padding: 0;
+	html { 
+		color-scheme: dark;
 	}
 </style>
