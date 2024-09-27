@@ -4,38 +4,7 @@ import SectionContainer from "../components/SectionContainer.astro"
 import Plus from "../components/icons/Plus.astro"
 import Minus from "../components/icons/Minus.astro"
 
-let roses = [
-    {
-        title: "Roja",
-        description: "Te amo ❤️",
-        img: "/Red.webp",
-    },
-    {
-        title: "Anaranjada con Puntas Rojas",
-        description: "Te deseo 🔥",
-        img: "/Orange.webp",
-    },
-    {
-        title: "Morada",
-        description: "Te admiro",
-        img: "/Purple.webp",
-    },
-    { 
-        title: "Azul",
-        description: "Eres maravillosamente diferente",
-        img: "/Blue.webp",
-    },
-    {
-        title: "Blanca",
-        description: "Lealtad",
-        img: "/White.webp",
-    },
-    {
-        title: "Amarilla",
-        description: "Un profesor como usted se lleva en el corazón para siempre",
-        img: "/Yellow.webp",
-    },
-]
+import { roses } from "../data/roses";
 ---
 
 <Layout title="Elige tus rosas">
@@ -53,13 +22,14 @@ let roses = [
                                     <p class="text-sm font-semibold">{title}</p>
                                     <p class="text-xs">{description}</p>
                                 </div>
+
+                                <!--Botones de aumentear y decrementar cantidad de rosas-->
                                 <div class="flex flex-row items-center justify-center space-x-2 text-center pb-3">
-                                    <button class="bg-purple-600/30 rounded-md p-1"> <Minus  class="size-4 text-xl font-black"/> </button>
-                                    <input type="text" placeholder="0" class="w-12 bg-black/70 px-4 rounded-lg text-center"/>
-                                    <button class="bg-purple-600/30 rounded-md p-1"> <Plus class="size-4 text-xl font-black"/> </button>
+                                    <button id=`btn-minus-${title}` class="bg-purple-600/30 rounded-md p-1"> <Minus  class="size-4 text-xl font-black"/> </button>
+                                    <input type="text" placeholder="0" disabled id=`input-${title}` class="w-12 bg-black/70 px-4 rounded-lg text-center"/>
+                                    <button id=`btn-plus-${title}` class="bg-purple-600/30 rounded-md p-1"> <Plus class="size-4 text-xl font-black"/> </button>
                                 </div>
                             </div>
-                           
                         </div>
                     ))
                 }
@@ -67,4 +37,26 @@ let roses = [
         </SectionContainer>
     </main>
 </Layout>
+
+<script>
+    import { roses } from "../data/roses";
+
+    roses.forEach(({ title }) => {
+        const btnPlus = document.getElementById(`btn-plus-${title}`) as HTMLButtonElement
+        const btnMinus = document.getElementById(`btn-minus-${title}`) as HTMLButtonElement
+        const input = document.getElementById(`input-${title}`) as HTMLInputElement
+        let value: number = 0
+
+        btnPlus.addEventListener("click", () => {
+            value++
+            input.value = value.toString()
+        });
+
+        btnMinus.addEventListener("click", () => {
+            value--
+            if (value < 0) value = 0
+            input.value = value.toString()
+        });
+    })
+</script>
 
