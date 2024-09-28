@@ -4,8 +4,8 @@ import SectionContainer from "../components/SectionContainer.astro"
 import Plus from "../components/icons/Plus.astro"
 import Minus from "../components/icons/Minus.astro"
 import NextButton from "../components/NextButton.astro"
-
 import { roses } from "../data/roses"
+import { addCartItem, cartItems } from "../stores/cartStore"
 ---
 
 <Layout title="Elige tus rosas">
@@ -63,18 +63,24 @@ import { roses } from "../data/roses"
 
 <script>
     import { roses } from "../data/roses";
+    import { addCartItem, cartItems } from "../stores/cartStore";
 
-    // Selecciona el botón "NextButton"
+    // Obtener los elementos HTML necesarios
     const btnNext = document.getElementById("btn-next") as HTMLElement;
     const totalOfRoses = document.getElementById("total-roses") as HTMLElement;
     const totalToPayElement = document.getElementById("total-to-pay") as HTMLElement;
 
-    const pedidos = roses.map(({ title }) => ({
-        title,
-        quantity: 0,  
-    }));
+    // Cargar el carrito inicial desde la tienda global
+    const currentCart = cartItems.get();
+    
+    // Sincronizar la UI con los datos del carrito almacenado en el estado global
+    currentCart.forEach(item => {
+        const input = document.getElementById(`input-${item.title}`) as HTMLInputElement;
+        input.value = item.quantity.toString();
+        updatePedido(item.title, item.quantity); // Actualizamos los pedidos con los datos almacenados
+    });
 
-    // Función para comprobar si alguno de los inputs tiene un valor diferente de "0" o vacío
+    // Función para comprobar si los inputs tienen valores distintos de "0" o vacíos
     function checkInputs() {
         let showButton = false;
         
@@ -86,7 +92,6 @@ import { roses } from "../data/roses"
         });
 
         if (showButton) {
-            //Muestra el botón "NextButton"
             btnNext.classList.remove("opacity-0");
             btnNext.classList.remove("translate-y-24");
             btnNext.classList.add("translate-y-0");
@@ -97,31 +102,29 @@ import { roses } from "../data/roses"
         }
     }
 
-    // Función para actualizar el pedido en el array
-    function updatePedido(title: string | "", quantity: number) {
-        const pedido = pedidos.find((pedido) => pedido.title === title);
-        if (pedido) {
-            pedido.quantity = quantity; // Actualizamos la cantidad en el array
-        }
-
-        calculateTotal();
+    // Función para actualizar el pedido y la cantidad en el carrito global
+    function updatePedido(title: string, quantity: number) {
+        addCartItem({ title, quantity }); // Actualiza el carrito global y guarda en Local Storage
+        calculateTotal(); // Recalcular el total después de actualizar el carrito
     }
 
+    // Función para calcular el total de rosas seleccionadas y el total a pagar
     function calculateTotal() {
-        // Calcular el total de rosas seleccionadas
-        const totalRoses = pedidos.reduce((acc, pedido) => acc + pedido.quantity, 0);
-        
+        // Obtenemos el carrito desde la tienda global
+        const currentCart = cartItems.get();
+
+        // Calculamos el total de rosas seleccionadas
+        const totalRoses = currentCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
         let totalToPay = 0;
 
-        // Si el usuario selecciona múltiples de 3
         if (totalRoses >= 3) {
             // Dividir el total de rosas en lotes de 3
-            const fullSetsOfThree = Math.floor(totalRoses / 3); // Cuántos grupos completos de 3 tenemos
-            const remainingRoses = totalRoses % 3; // Rosas que no completan un grupo de 3
+            const fullSetsOfThree = Math.floor(totalRoses / 3); 
+            const remainingRoses = totalRoses % 3; 
             
             // 5000 por cada conjunto de 3 rosas
             totalToPay = fullSetsOfThree * 5000;
-
+            
             // 2000 por cada rosa adicional fuera del múltiplo de 3
             totalToPay += remainingRoses * 2000;
         } else {
@@ -129,38 +132,37 @@ import { roses } from "../data/roses"
             totalToPay = totalRoses * 2000;
         }
 
+        // Actualizamos los valores en la UI
         totalOfRoses.innerHTML = totalRoses.toString();
         totalToPayElement.innerHTML = totalToPay.toString();
     }
 
-    // Inicializa los botones y añade los event listeners
+    // Inicializamos los botones de incrementar/decrementar para cada rosa
     roses.forEach(({ title }) => {
         const btnPlus = document.getElementById(`btn-plus-${title}`) as HTMLButtonElement;
         const btnMinus = document.getElementById(`btn-minus-${title}`) as HTMLButtonElement;
         const input = document.getElementById(`input-${title}`) as HTMLInputElement;
 
-        let value: number = 0;
+        let quantity: number = 0;
 
-        // Aumenta el valor al hacer clic en el botón de "plus"
+        // Incrementar cantidad al hacer clic en "plus"
         btnPlus.addEventListener("click", () => {
-            value++;
-            input.value = value.toString();
-            updatePedido(title, value);
-            checkInputs();
+            quantity++;
+            input.value = quantity.toString();
+            updatePedido(title, quantity); // Actualizamos el pedido y recalculamos el total
+            checkInputs(); // Revisar si hay valores para mostrar el botón de "siguiente"
         });
 
-        // Disminuye el valor al hacer clic en el botón de "minus"
+        // Decrementar cantidad al hacer clic en "minus"
         btnMinus.addEventListener("click", () => {
-            value--;
-            if (value < 0) value = 0; // Asegura que el valor no sea negativo
-            input.value = value.toString();
-            updatePedido(title, value);
-            checkInputs(); 
+            quantity--;
+            if (quantity < 0) quantity = 0; // Asegurar que no haya valores negativos
+            input.value = quantity.toString();
+            updatePedido(title, quantity); // Actualizamos el pedido y recalculamos el total
+            checkInputs(); // Revisar si hay valores para mostrar el botón de "siguiente"
         });
     });
 
     // Al cargar la página, oculta el botón "NextButton" si todos los inputs están vacíos o en "0"
     checkInputs();
 </script>
-
-
