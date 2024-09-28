@@ -9,9 +9,6 @@ import { roses } from "../data/roses"
 ---
 
 <Layout title="Elige tus rosas">
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    </head>
     <main class="flex flex-col w-full justify-center items-center text-center px-4 pt-20 space-y-10">
         <SectionContainer>
             <h2 class="text-3xl font-semibold">Elige las rosas que quieres enviar a esa persona especial</h2>
@@ -54,10 +51,10 @@ import { roses } from "../data/roses"
 
             <div class="flex justify-around items-center">
                 <div>
-                    <button><a href="" class="bg-gradient-to-r from-purple-900 via-purple-800 to-purple-700 text-transparent bg-clip-text font-bold">Sin foto</a></button>
+                    <button><a href="/order-info" class="bg-gradient-to-r from-purple-900 via-purple-800 to-purple-700 text-transparent bg-clip-text font-bold">Sin foto</a></button>
                 </div>
                 <div>
-                    <NextButton title="Agregar foto" href="/roses" />
+                    <button><a href="/photo" class="py-3 px-5 bg-gradient-to-r from-purple-950 via-purple-900 to-purple-800 rounded-xl font-bold">Agregar foto</a></button>
                 </div>
             </div>
 		</section>
@@ -100,6 +97,7 @@ import { roses } from "../data/roses"
         }
     }
 
+    // Función para actualizar el pedido en el array
     function updatePedido(title: string | "", quantity: number) {
         const pedido = pedidos.find((pedido) => pedido.title === title);
         if (pedido) {
@@ -161,9 +159,6 @@ import { roses } from "../data/roses"
         });
     });
 
-    function printPedidos() {
-        console.log(pedidos);
-    }
     // Al cargar la página, oculta el botón "NextButton" si todos los inputs están vacíos o en "0"
     checkInputs();
 </script>
