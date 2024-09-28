@@ -3,9 +3,10 @@ import Layout from "../layouts/Layout.astro"
 import SectionContainer from "../components/SectionContainer.astro"
 import Plus from "../components/icons/Plus.astro"
 import Minus from "../components/icons/Minus.astro"
-import NextButton from "../components/NextButton.astro"
+import BottomSheet from "../components/BottomSheet.astro";
+
 import { roses } from "../data/roses"
-import { addCartItem, cartItems } from "../stores/cartStore"
+
 ---
 
 <Layout title="Elige tus rosas">
@@ -37,6 +38,7 @@ import { addCartItem, cartItems } from "../stores/cartStore"
             </div>
         </SectionContainer>
 
+        <!-- Bottom sheet para mostrar un resumen y los botones de continuar con o sin foto -->
         <section id="btn-next" class="md:w-3/5 w-full sticky bottom-5 flex flex-col justify-center gap-y-10 p-4 rounded-3xl bg-stone-950/90 backdrop-blur-md shadow-2xl shadow-black ease-out transition-all translate-y-24 opacity-0 ">
             <div class="flex flex-row items-center justify-between">
                 <div class="text-xs text-stone-400 flex flex-col items-start justify-center"> 
@@ -143,7 +145,12 @@ import { addCartItem, cartItems } from "../stores/cartStore"
         const btnMinus = document.getElementById(`btn-minus-${title}`) as HTMLButtonElement;
         const input = document.getElementById(`input-${title}`) as HTMLInputElement;
 
-        let quantity: number = 0;
+        // Buscar la cantidad inicial del carrito si está disponible
+        const currentItem = currentCart.find(item => item.title === title);
+        let quantity = currentItem ? currentItem.quantity : 0; // Inicializa con la cantidad del carrito o 0
+
+        // Mostrar la cantidad inicial en el input
+        input.value = quantity.toString();
 
         // Incrementar cantidad al hacer clic en "plus"
         btnPlus.addEventListener("click", () => {
