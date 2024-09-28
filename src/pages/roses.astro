@@ -9,6 +9,9 @@ import { roses } from "../data/roses"
 ---
 
 <Layout title="Elige tus rosas">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    </head>
     <main class="flex flex-col w-full justify-center items-center text-center px-4 pt-20 space-y-10">
         <SectionContainer>
             <h2 class="text-3xl font-semibold">Elige las rosas que quieres enviar a esa persona especial</h2>
@@ -44,8 +47,8 @@ import { roses } from "../data/roses"
                     <p>3 rosas x $5000</p>
                 </div>
                 <div class="flex flex-col items-end justify-end gap-2">
-                    <p class="text-xs font-semibold">Rosas seleccionadas: 0</p>
-                    <p class="font-bold">Total: $2000</p>
+                    <p class="text-xs font-semibold">Rosas seleccionadas: <span id="total-roses"></span></p>
+                    <p class="font-bold">Total: $<span id="total-to-pay"></span></p>
                 </div>
             </div>
 
@@ -66,6 +69,13 @@ import { roses } from "../data/roses"
 
     // Selecciona el botón "NextButton"
     const btnNext = document.getElementById("btn-next") as HTMLElement;
+    const totalOfRoses = document.getElementById("total-roses") as HTMLElement;
+    const totalToPayElement = document.getElementById("total-to-pay") as HTMLElement;
+
+    const pedidos = roses.map(({ title }) => ({
+        title,
+        quantity: 0,  
+    }));
 
     // Función para comprobar si alguno de los inputs tiene un valor diferente de "0" o vacío
     function checkInputs() {
@@ -90,6 +100,41 @@ import { roses } from "../data/roses"
         }
     }
 
+    function updatePedido(title: string | "", quantity: number) {
+        const pedido = pedidos.find((pedido) => pedido.title === title);
+        if (pedido) {
+            pedido.quantity = quantity; // Actualizamos la cantidad en el array
+        }
+
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        // Calcular el total de rosas seleccionadas
+        const totalRoses = pedidos.reduce((acc, pedido) => acc + pedido.quantity, 0);
+        
+        let totalToPay = 0;
+
+        // Si el usuario selecciona múltiples de 3
+        if (totalRoses >= 3) {
+            // Dividir el total de rosas en lotes de 3
+            const fullSetsOfThree = Math.floor(totalRoses / 3); // Cuántos grupos completos de 3 tenemos
+            const remainingRoses = totalRoses % 3; // Rosas que no completan un grupo de 3
+            
+            // 5000 por cada conjunto de 3 rosas
+            totalToPay = fullSetsOfThree * 5000;
+
+            // 2000 por cada rosa adicional fuera del múltiplo de 3
+            totalToPay += remainingRoses * 2000;
+        } else {
+            // Si el usuario ha seleccionado menos de 3 rosas, aplicar precio normal
+            totalToPay = totalRoses * 2000;
+        }
+
+        totalOfRoses.innerHTML = totalRoses.toString();
+        totalToPayElement.innerHTML = totalToPay.toString();
+    }
+
     // Inicializa los botones y añade los event listeners
     roses.forEach(({ title }) => {
         const btnPlus = document.getElementById(`btn-plus-${title}`) as HTMLButtonElement;
@@ -102,6 +147,7 @@ import { roses } from "../data/roses"
         btnPlus.addEventListener("click", () => {
             value++;
             input.value = value.toString();
+            updatePedido(title, value);
             checkInputs();
         });
 
@@ -110,10 +156,14 @@ import { roses } from "../data/roses"
             value--;
             if (value < 0) value = 0; // Asegura que el valor no sea negativo
             input.value = value.toString();
+            updatePedido(title, value);
             checkInputs(); 
         });
     });
 
+    function printPedidos() {
+        console.log(pedidos);
+    }
     // Al cargar la página, oculta el botón "NextButton" si todos los inputs están vacíos o en "0"
     checkInputs();
 </script>
