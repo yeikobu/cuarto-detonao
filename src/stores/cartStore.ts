@@ -1,10 +1,11 @@
-// src/stores/cartStore.ts
 import { atom } from 'nanostores';
 
 // Definimos el tipo CartItem
 export interface CartItem {
     title: string;
     quantity: number;
+    photo?: string; // URL de la foto (opcional)
+    message?: string; // Mensaje del usuario (opcional)
 }
 
 // Creamos la tienda (store) para almacenar los items del carrito
@@ -24,6 +25,8 @@ export function addCartItem(item: CartItem) {
 
     if (existingItem) {
         existingItem.quantity = item.quantity;
+        if (item.photo) existingItem.photo = item.photo; // Guardar la foto
+        if (item.message) existingItem.message = item.message; // Guardar el mensaje
     } else {
         currentCart.push(item);
     }
