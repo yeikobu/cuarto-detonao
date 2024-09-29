@@ -118,11 +118,13 @@ import { addCartItem, cartItems } from "../stores/cartStore";
             const reader = new FileReader(); 
             reader.onload = function(e) {
                 preview.src = e.target?.result as string; 
+                photoDataUrl = preview.src; 
                 preview.classList.remove('hidden'); // Mostrar el preview de la imagen
                 uploadButton.textContent = 'Cambiar foto'; // Cambiar el texto del botón
                 savePhotoAndMessage(); // Guardar la foto y el mensaje en el estado global
                 checkInputs();
             };
+            
             reader.readAsDataURL(file); 
         }
     });
@@ -134,26 +136,25 @@ import { addCartItem, cartItems } from "../stores/cartStore";
         // Fijar el contador en 0 si excede el límite
         if (remainingChars <= 0) {
             charCount.textContent = `0 caracteres restantes`;
-            message.value = message.value.substring(0, maxChars); // Limitar el texto a 40 caracteres
+            message.value = message.value.substring(0, maxChars); 
             charCount.classList.add("text-red-500");
         } else {
             charCount.textContent = `${remainingChars} caracteres restantes`;
             charCount.classList.remove("text-red-500");
         }
 
-        savePhotoAndMessage();
-        checkInputs(); // Verificar si se deben mostrar u ocultar otros elementos
+        savePhotoAndMessage(); 
+        checkInputs(); 
     });
 
     function savePhotoAndMessage() {
-        const currentMessage = message.value; // Obtener el mensaje actual
+        const currentMessage = message.value; 
 
-        // Agregar la foto y el mensaje al estado global
         addCartItem({
             title: "Rosa con dedicatoria",
-            quantity: 1, // Aquí puedes ajustar la cantidad según corresponda
-            photo: photoDataUrl, // Guardar la foto
-            message: currentMessage // Guardar el mensaje
+            quantity: 1,
+            photo: photoDataUrl, 
+            message: currentMessage // Guardar el mensaje vacío si es el caso
         });
     }
 
@@ -237,6 +238,13 @@ import { addCartItem, cartItems } from "../stores/cartStore";
         // Actualizamos los valores en la UI
         totalOfRoses.innerHTML = totalRoses.toString();
         totalToPayElement.innerHTML = (totalToPay + photoCost).toString();
+    }
+
+    const currentCart = cartItems.get(); // Obtener el carrito del estado global
+    const currentItem = currentCart.find(item => item.title === "Rosa con dedicatoria");
+
+    if (currentItem?.message != "") {
+      message.value = currentItem?.message || ""; // Cargar el mensaje del carrito
     }
 
     checkInputs();
