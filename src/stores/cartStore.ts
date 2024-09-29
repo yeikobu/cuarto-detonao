@@ -4,7 +4,7 @@ import { atom } from 'nanostores';
 export interface CartItem {
     title: string;
     quantity: number;
-    photo?: string; // URL de la foto (opcional)
+    photo: string; // URL de la foto (opcional)
     message?: string; // Mensaje del usuario (opcional)
 }
 
