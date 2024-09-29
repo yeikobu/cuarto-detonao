@@ -39,7 +39,7 @@ import { roses } from "../data/roses"
         </SectionContainer>
 
         <!-- Bottom sheet para mostrar un resumen y los botones de continuar con o sin foto -->
-        <section id="btn-next" class="md:w-3/5 w-full sticky bottom-5 flex flex-col justify-center gap-y-10 p-4 rounded-3xl bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0 ">
+        <section id="bottom-sheet" class="md:w-3/5 w-full sticky bottom-5 flex flex-col justify-center gap-y-10 p-4 rounded-3xl bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0 ">
             <div class="flex flex-row items-center justify-between">
                 <div class="text-xs text-stone-400 flex flex-col items-start justify-center"> 
                     <p>1 rosa x $2000</p>
@@ -68,7 +68,7 @@ import { roses } from "../data/roses"
     import { addCartItem, cartItems } from "../stores/cartStore";
 
     // Obtener los elementos HTML necesarios
-    const btnNext = document.getElementById("btn-next") as HTMLElement;
+    const btnNext = document.getElementById("bottom-sheet") as HTMLElement;
     const totalOfRoses = document.getElementById("total-roses") as HTMLElement;
     const totalToPayElement = document.getElementById("total-to-pay") as HTMLElement;
 

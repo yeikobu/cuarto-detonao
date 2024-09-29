@@ -2,6 +2,9 @@
 import Layout from "../layouts/Layout.astro"
 import PhotoIcon from "../components/icons/PhotoIcon.astro"
 import SectionContainer from "../components/SectionContainer.astro"
+import ChevronRigth from "../components/icons/ChevronRigth.astro"
+
+import { addCartItem, cartItems } from "../stores/cartStore";
 ---
 
 <Layout title="Agregar foto">
@@ -9,30 +12,73 @@ import SectionContainer from "../components/SectionContainer.astro"
         <SectionContainer>
             <h2 class="text-2xl font-semibold">Agrega la foto que deseas enviar a esa persona especial</h2>
 
-            <button id="uploadButton" class="flex items-center gap-2 py-3 px-5 bg-gradient-to-r from-purple-900 via-purple-800 to-purple-700 rounded-xl font-bold text-white">
-                Seleccionar foto
+            <div class="flex items-center gap-2 py-3 px-5 bg-gradient-to-r from-purple-900 via-purple-800 to-purple-700 rounded-xl font-bold">
+                <button id="uploadButton" class="">
+                    Seleccionar foto
+                </button>
                 <PhotoIcon class="size-6" />
-            </button>
+            </div>
     
             <!-- Input oculto para seleccionar la foto -->
             <input type="file" id="fileInput" accept="image/*" class="hidden" />
             
             <!-- Donde se mostrará la foto seleccionada -->
-            <div class="mt-2">
-                <img id="preview" src="" alt="Previsualización de la imagen" class="hidden w-32 h-32 object-cover rounded-lg" />
+            <div class="">
+                <img id="preview" src="" alt="Previsualización de la imagen" class="hidden w-48 h-48 object-cover rounded-lg" />
             </div>
         </SectionContainer>
 
         <SectionContainer>
-            
+            <div class="space-y-2">
+                <h2 class="text-2xl font-semibold">Escribe tu mensaje a dedicar</h2>
+                <textarea id="message" placeholder="Escribe tu dedicatoria" maxlength="40" class="w-full h-24 p-4 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none"></textarea>
+                <p id="charCount" class="text-sm text-gray-400">40 caracteres restantes</p>
+            </div>
+            <div id="continue-without-photo">
+                <button><a href="/order-info" class="bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-transparent bg-clip-text font-bold">Continuar sin foto</a></button>
+            </div>
         </SectionContainer>
+
+        <section id="bottom-sheet" class="md:w-3/5 w-full sticky bottom-5 flex flex-col justify-center gap-y-10 p-4 rounded-3xl bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black/60 ease-out transition-all translate-y-24 opacity-0">
+            <div class="flex flex-row items-center justify-between">
+                <div class="text-xs text-stone-400 flex flex-col items-start justify-center"> 
+                    <p>1 rosa x $2000</p>
+                    <p>3 rosas x $5000</p>
+                    <p class="self-start">Foto con dedicatoria x 1000</p>
+                </div>
+                <div class="flex flex-col items-end justify-end gap-2">
+                    <p class="text-xs font-semibold">Rosas seleccionadas: <span id="total-roses"></span></p>
+                    <p class="font-bold">Total: $<span id="total-to-pay"></span></p>
+                </div>
+            </div>
+
+            <div class="flex justify-around items-center">
+                <div>
+                    <button><a href="/order-info" class="bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-transparent bg-clip-text font-bold">Continuar sin foto</a></button>
+                </div>
+                <div>
+                    <button><a href="/photo" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950 via-purple-900 to-purple-950 rounded-xl font-bold">Continuar<ChevronRigth class="size-6"/></a></button>
+                </div>
+            </div>
+		</section>
     </main>
 </Layout>
 
 <script>
+    import { addCartItem, cartItems } from "../stores/cartStore";
+
     const uploadButton = document.getElementById('uploadButton') as HTMLButtonElement;
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     const preview = document.getElementById('preview') as HTMLImageElement;
+    const message = document.getElementById('message') as HTMLTextAreaElement;
+    const bottomSheet = document.getElementById('bottom-sheet') as HTMLElement;
+    const continueWithoutPhoto = document.getElementById('continue-without-photo') as HTMLElement;
+    const charCount = document.getElementById('charCount') as HTMLParagraphElement;
+    const totalOfRoses = document.getElementById("total-roses") as HTMLElement;
+    const totalToPayElement = document.getElementById("total-to-pay") as HTMLElement;
+
+    const maxChars = 40; // Límite máximo de caracteres
+    let photoDataUrl = "";
 
     // Abrir la interfaz de selección de archivos al hacer clic en el botón
     uploadButton.addEventListener('click', () => {
@@ -42,14 +88,100 @@ import SectionContainer from "../components/SectionContainer.astro"
     // Mostrar la imagen seleccionada en el preview
     fileInput.addEventListener('change', (event) => {
         const input = event.target as HTMLInputElement; 
+
         if (input.files && input.files[0]) { 
             const file = input.files[0]; 
             const reader = new FileReader(); 
             reader.onload = function(e) {
                 preview.src = e.target?.result as string; 
-                preview.classList.remove('hidden'); 
+                preview.classList.remove('hidden'); // Mostrar el preview de la imagen
+                uploadButton.textContent = 'Cambiar foto'; // Cambiar el texto del botón
+                savePhotoAndMessage(); // Guardar la foto y el mensaje en el estado global
+                checkInputs();
             };
             reader.readAsDataURL(file); 
         }
     });
+
+    // Actualizar el contador de caracteres cuando el usuario escribe en el textarea
+    message.addEventListener('input', () => {
+        const remainingChars = maxChars - message.value.length;
+
+        // Fijar el contador en 0 si excede el límite
+        if (remainingChars <= 0) {
+            charCount.textContent = `0 caracteres restantes`;
+            message.value = message.value.substring(0, maxChars); // Limitar el texto a 40 caracteres
+        } else {
+            charCount.textContent = `${remainingChars} caracteres restantes`;
+        }
+
+        savePhotoAndMessage();
+        checkInputs(); // Verificar si se deben mostrar u ocultar otros elementos
+    });
+
+    function savePhotoAndMessage() {
+        const currentMessage = message.value; // Obtener el mensaje actual
+
+        // Agregar la foto y el mensaje al estado global
+        addCartItem({
+            title: "Rosa con dedicatoria",
+            quantity: 1, // Aquí puedes ajustar la cantidad según corresponda
+            photo: photoDataUrl, // Guardar la foto
+            message: currentMessage // Guardar el mensaje
+        });
+    }
+
+    // Función para verificar si mostrar el Bottom Sheet
+    function checkInputs() { 
+        const currentCart = cartItems.get(); // Obtener el carrito del estado global
+        const currentItem = currentCart.find(item => item.title === "Rosa con dedicatoria");
+        
+        // Comprobar que el mensaje no está vacío y la imagen ha sido seleccionada (el preview no tiene la clase 'hidden')
+        if (message.value !== '' && !preview.classList.contains('hidden')) {
+            // Mostrar el Bottom Sheet
+            bottomSheet.classList.remove("opacity-0");
+            bottomSheet.classList.remove("translate-y-24");
+            bottomSheet.classList.add("translate-y-0");
+
+            continueWithoutPhoto.classList.add("hidden"); // Ocultar la opción de continuar sin foto
+            calculateTotal(); // Recalcular el total después de agregar el pedido
+        } else { 
+            // Ocultar el Bottom Sheet
+            bottomSheet.classList.remove("translate-y-0");
+            bottomSheet.classList.add("translate-y-24");
+            bottomSheet.classList.add("opacity-0");
+
+            continueWithoutPhoto.classList.remove("hidden"); // Mostrar la opción de continuar sin foto
+        }
+    }
+
+    function calculateTotal() {
+        // Obtenemos el carrito desde la tienda global
+        const currentCart = cartItems.get();
+
+        // Calculamos el total de rosas seleccionadas
+        const totalRoses = currentCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
+        let totalToPay = 0;
+
+        if (totalRoses >= 3) {
+            // Dividir el total de rosas en lotes de 3
+            const fullSetsOfThree = Math.floor(totalRoses / 3); 
+            const remainingRoses = totalRoses % 3; 
+            
+            // 5000 por cada conjunto de 3 rosas
+            totalToPay = fullSetsOfThree * 5000;
+            
+            // 2000 por cada rosa adicional fuera del múltiplo de 3
+            totalToPay += remainingRoses * 2000;
+        } else {
+            // Si el usuario ha seleccionado menos de 3 rosas, aplicar precio normal
+            totalToPay = totalRoses * 2000;
+        }
+
+        // Actualizamos los valores en la UI
+        totalOfRoses.innerHTML = totalRoses.toString();
+        totalToPayElement.innerHTML = totalToPay.toString();
+    }
+
+    checkInputs();
 </script>
