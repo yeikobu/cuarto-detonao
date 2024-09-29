@@ -44,16 +44,34 @@ import { addCartItem, cartItems } from "../stores/cartStore";
             </div>
         </SectionContainer>
 
-        <section id="bottom-sheet" class="md:w-3/5 w-full sticky bottom-5 flex flex-col justify-center gap-y-10 p-4 rounded-3xl bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black/60 ease-out transition-all translate-y-24 opacity-0">
-            <div class="flex flex-row items-center justify-between">
-                <div class="text-xs text-stone-400 flex flex-col items-start justify-center"> 
-                    <p>1 rosa x $2000</p>
-                    <p>3 rosas x $5000</p>
-                    <p class="self-start">Foto con dedicatoria x 1000</p>
+        <section id="bottom-sheet" class="md:w-3/5 w-full sticky bottom-5 flex flex-col justify-center gap-y-4 p-4 rounded-3xl bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0 ">
+            <div class="flex flex-row items-center justify-center">
+                <div class="flex flex-col w-full justify-between gap-1">
+                    <div class="flex flex-row items-center justify-between text-xs font-semibold text-gray-300">
+                        <p class="">Rosas seleccionadas: </p>
+                        <span id="total-roses"></span>
+                    </div>
+
+                    <div class="flex flex-row items-center justify-between text-xs font-semibold text-gray-300">
+                        <p class="text-xs font-semibold text-gray-300">Total a pagar por las rosas: </p>
+                        <div class="flex flex-row">
+                            <p>$</p>
+                            <span id="total-roses-to-pay"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row items-center justify-between text-xs font-semibold text-gray-300">
+                        <p class="text-xs font-semibold text-gray-300">Foto con dedicatoria: </p>
+                        <span>$1000</span>
+                    </div>
                 </div>
-                <div class="flex flex-col items-end justify-end gap-2">
-                    <p class="text-xs font-semibold">Rosas seleccionadas: <span id="total-roses"></span></p>
-                    <p class="font-bold">Total: $<span id="total-to-pay"></span></p>
+            </div>
+
+            <div class="flex flex-row items-center justify-between font-bold">
+                <p class="">Total:</p>
+                <div class="flex flex-row">
+                    <p>$</p>
+                    <span id="total-to-pay"></span>
                 </div>
             </div>
 
@@ -80,6 +98,7 @@ import { addCartItem, cartItems } from "../stores/cartStore";
     const continueWithoutPhoto = document.getElementById('continue-without-photo') as HTMLElement;
     const charCount = document.getElementById('charCount') as HTMLParagraphElement;
     const totalOfRoses = document.getElementById("total-roses") as HTMLElement;
+    const totalOfRosesToPay = document.getElementById("total-roses-to-pay") as HTMLElement;
     const totalToPayElement = document.getElementById("total-to-pay") as HTMLElement;
 
     const maxChars = 40; // Límite máximo de caracteres
@@ -151,6 +170,7 @@ import { addCartItem, cartItems } from "../stores/cartStore";
             bottomSheet.classList.add("translate-y-0");
 
             continueWithoutPhoto.classList.add("hidden"); // Ocultar la opción de continuar sin foto
+            calculateTotalToPayForRoses(); // Recalcular el total después de agregar el pedido
             calculateTotal(); // Recalcular el total después de agregar el pedido
         } else { 
             // Ocultar el Bottom Sheet
@@ -162,7 +182,7 @@ import { addCartItem, cartItems } from "../stores/cartStore";
         }
     }
 
-    function calculateTotal() {
+    function calculateTotalToPayForRoses() {
         // Obtenemos el carrito desde la tienda global
         const currentCart = cartItems.get();
 
@@ -187,7 +207,36 @@ import { addCartItem, cartItems } from "../stores/cartStore";
 
         // Actualizamos los valores en la UI
         totalOfRoses.innerHTML = totalRoses.toString();
-        totalToPayElement.innerHTML = totalToPay.toString();
+        totalOfRosesToPay.innerHTML = totalToPay.toString();
+    }
+
+    function calculateTotal() {
+        // Obtenemos el carrito desde la tienda global
+        const currentCart = cartItems.get();
+
+        // Calculamos el total de rosas seleccionadas
+        const totalRoses = currentCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
+        let totalToPay = 0;
+        const photoCost = 1000;
+
+        if (totalRoses >= 3) {
+            // Dividir el total de rosas en lotes de 3
+            const fullSetsOfThree = Math.floor(totalRoses / 3); 
+            const remainingRoses = totalRoses % 3; 
+            
+            // 5000 por cada conjunto de 3 rosas
+            totalToPay = fullSetsOfThree * 5000;
+            
+            // 2000 por cada rosa adicional fuera del múltiplo de 3
+            totalToPay += remainingRoses * 2000;
+        } else {
+            // Si el usuario ha seleccionado menos de 3 rosas, aplicar precio normal
+            totalToPay = totalRoses * 2000;
+        }
+
+        // Actualizamos los valores en la UI
+        totalOfRoses.innerHTML = totalRoses.toString();
+        totalToPayElement.innerHTML = (totalToPay + photoCost).toString();
     }
 
     checkInputs();
