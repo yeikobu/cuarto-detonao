@@ -6,7 +6,6 @@ import Minus from "../components/icons/Minus.astro"
 import ChevronRigth from "../components/icons/ChevronRigth.astro"
 
 import { roses } from "../data/roses"
-
 ---
 
 <Layout title="Elige tus rosas">
@@ -25,11 +24,11 @@ import { roses } from "../data/roses"
                                     <p class="text-xs">{description}</p>
                                 </div>
 
-                                <!--Botones de aumentear y decrementar cantidad de rosas-->
+                                <!-- Botones de aumentar y decrementar cantidad de rosas -->
                                 <div class="flex flex-row items-center justify-center space-x-2 text-center pb-3">
-                                    <button id=`btn-minus-${title}` class="bg-purple-600/30 rounded-md p-1"> <Minus  class="size-4 text-xl font-black"/> </button>
-                                    <input type="text" placeholder="0" disabled id=`input-${title}` class="w-12 px-4 rounded-lg text-center"/>
-                                    <button id=`btn-plus-${title}` class="bg-purple-600/30 rounded-md p-1"> <Plus class="size-4 text-xl font-black"/> </button>
+                                    <button id={`btn-minus-${title}`} class="bg-purple-600/30 rounded-md p-1"> <Minus class="size-4 text-xl font-black"/> </button>
+                                    <input type="text" placeholder="0" disabled id={`input-${title}`} class="w-12 px-4 rounded-lg text-center"/>
+                                    <button id={`btn-plus-${title}`} class="bg-purple-600/30 rounded-md p-1"> <Plus class="size-4 text-xl font-black"/> </button>
                                 </div>
                             </div>
                         </div>
@@ -59,7 +58,7 @@ import { roses } from "../data/roses"
                     <button><a href="/photo" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950 via-purple-900 to-purple-950 rounded-xl font-bold">Agregar foto<ChevronRigth class="size-6"/></a></button>
                 </div>
             </div>
-		</section>
+        </section>
     </main>
 </Layout>
 
@@ -67,109 +66,116 @@ import { roses } from "../data/roses"
     import { roses } from "../data/roses";
     import { addCartItem, cartItems } from "../stores/cartStore";
 
-    // Obtener los elementos HTML necesarios
-    const btnNext = document.getElementById("bottom-sheet") as HTMLElement;
-    const totalOfRoses = document.getElementById("total-roses") as HTMLElement;
-    const totalToPayElement = document.getElementById("total-to-pay") as HTMLElement;
+    // Esperar a que el DOM esté completamente cargado
+    document.addEventListener("DOMContentLoaded", () => {
+        // Obtener los elementos HTML necesarios
+        const btnNext = document.getElementById("bottom-sheet") as HTMLElement;
+        const totalOfRoses = document.getElementById("total-roses") as HTMLElement;
+        const totalToPayElement = document.getElementById("total-to-pay") as HTMLElement;
 
-    // Cargar el carrito inicial desde la tienda global
-    const currentCart = cartItems.get();
-    
-    // Sincronizar la UI con los datos del carrito almacenado en el estado global
-    currentCart.forEach(item => {
-        const input = document.getElementById(`input-${item.title}`) as HTMLInputElement;
-        input.value = item.quantity.toString();
-        updatePedido(item.title, item.quantity); // Actualizamos los pedidos con los datos almacenados
-    });
-
-    // Función para comprobar si los inputs tienen valores distintos de "0" o vacíos
-    function checkInputs() {
-        let showButton = false;
+        // Cargar el carrito inicial desde la tienda global
+        const currentCart = cartItems.get();
         
-        roses.forEach(({ title }) => {
-            const input = document.getElementById(`input-${title}`) as HTMLInputElement;
-            if (input.value !== "" && input.value !== "0") {
-                showButton = true; 
+        // Sincronizar la UI con los datos del carrito almacenado en el estado global
+        currentCart.forEach(item => {
+            const input = document.getElementById(`input-${item.title}`) as HTMLInputElement;
+            if (input) {
+                input.value = item.quantity.toString();
+                updatePedido(item.title, item.quantity); // Actualizamos los pedidos con los datos almacenados
             }
         });
 
-        if (showButton) {
-            btnNext.classList.remove("opacity-0");
-            btnNext.classList.remove("translate-y-24");
-            btnNext.classList.add("translate-y-0");
-        } else {
-            btnNext.classList.remove("translate-y-0");
-            btnNext.classList.add("translate-y-24");
-            btnNext.classList.add("opacity-0");
-        }
-    }
-
-    // Función para actualizar el pedido y la cantidad en el carrito global
-    function updatePedido(title: string, quantity: number) {
-        addCartItem({ title, quantity }); // Actualiza el carrito global y guarda en Local Storage
-        calculateTotal(); // Recalcular el total después de actualizar el carrito
-    }
-
-    // Función para calcular el total de rosas seleccionadas y el total a pagar
-    function calculateTotal() {
-        // Obtenemos el carrito desde la tienda global
-        const currentCart = cartItems.get();
-
-        // Calculamos el total de rosas seleccionadas
-        const totalRoses = currentCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
-        let totalToPay = 0;
-
-        if (totalRoses >= 3) {
-            // Dividir el total de rosas en lotes de 3
-            const fullSetsOfThree = Math.floor(totalRoses / 3); 
-            const remainingRoses = totalRoses % 3; 
+        // Función para comprobar si los inputs tienen valores distintos de "0" o vacíos
+        function checkInputs() {
+            let showButton = false;
             
-            // 5000 por cada conjunto de 3 rosas
-            totalToPay = fullSetsOfThree * 5000;
-            
-            // 2000 por cada rosa adicional fuera del múltiplo de 3
-            totalToPay += remainingRoses * 2000;
-        } else {
-            // Si el usuario ha seleccionado menos de 3 rosas, aplicar precio normal
-            totalToPay = totalRoses * 2000;
+            roses.forEach(({ title }) => {
+                const input = document.getElementById(`input-${title}`) as HTMLInputElement;
+                if (input && input.value !== "" && input.value !== "0") {
+                    showButton = true; 
+                }
+            });
+
+            if (showButton) {
+                btnNext.classList.remove("opacity-0");
+                btnNext.classList.remove("translate-y-24");
+                btnNext.classList.add("translate-y-0");
+            } else {
+                btnNext.classList.remove("translate-y-0");
+                btnNext.classList.add("translate-y-24");
+                btnNext.classList.add("opacity-0");
+            }
         }
 
-        // Actualizamos los valores en la UI
-        totalOfRoses.innerHTML = totalRoses.toString();
-        totalToPayElement.innerHTML = totalToPay.toString();
-    }
+        // Función para actualizar el pedido y la cantidad en el carrito global
+        function updatePedido(title: string, quantity: number) {
+            addCartItem({ title, quantity }); // Actualiza el carrito global y guarda en Local Storage
+            calculateTotal(); // Recalcular el total después de actualizar el carrito
+        }
 
-    // Inicializamos los botones de incrementar/decrementar para cada rosa
-    roses.forEach(({ title }) => {
-        const btnPlus = document.getElementById(`btn-plus-${title}`) as HTMLButtonElement;
-        const btnMinus = document.getElementById(`btn-minus-${title}`) as HTMLButtonElement;
-        const input = document.getElementById(`input-${title}`) as HTMLInputElement;
+        // Función para calcular el total de rosas seleccionadas y el total a pagar
+        function calculateTotal() {
+            // Obtenemos el carrito desde la tienda global
+            const currentCart = cartItems.get();
 
-        // Buscar la cantidad inicial del carrito si está disponible
-        const currentItem = currentCart.find(item => item.title === title);
-        let quantity = currentItem ? currentItem.quantity : 0; // Inicializa con la cantidad del carrito o 0
+            // Calculamos el total de rosas seleccionadas
+            const totalRoses = currentCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
+            let totalToPay = 0;
 
-        // Mostrar la cantidad inicial en el input
-        input.value = quantity.toString();
+            if (totalRoses >= 3) {
+                // Dividir el total de rosas en lotes de 3
+                const fullSetsOfThree = Math.floor(totalRoses / 3); 
+                const remainingRoses = totalRoses % 3; 
+                
+                // 5000 por cada conjunto de 3 rosas
+                totalToPay = fullSetsOfThree * 5000;
+                
+                // 2000 por cada rosa adicional fuera del múltiplo de 3
+                totalToPay += remainingRoses * 2000;
+            } else {
+                // Si el usuario ha seleccionado menos de 3 rosas, aplicar precio normal
+                totalToPay = totalRoses * 2000;
+            }
 
-        // Incrementar cantidad al hacer clic en "plus"
-        btnPlus.addEventListener("click", () => {
-            quantity++;
+            // Actualizamos los valores en la UI
+            totalOfRoses.innerHTML = totalRoses.toString();
+            totalToPayElement.innerHTML = totalToPay.toString();
+        }
+
+        // Inicializamos los botones de incrementar/decrementar para cada rosa
+        roses.forEach(({ title }) => {
+            const btnPlus = document.getElementById(`btn-plus-${title}`) as HTMLButtonElement;
+            const btnMinus = document.getElementById(`btn-minus-${title}`) as HTMLButtonElement;
+            const input = document.getElementById(`input-${title}`) as HTMLInputElement;
+
+            if (!btnPlus || !btnMinus || !input) return;
+
+            // Buscar la cantidad inicial del carrito si está disponible
+            const currentItem = currentCart.find(item => item.title === title);
+            let quantity = currentItem ? currentItem.quantity : 0; // Inicializa con la cantidad del carrito o 0
+
+            // Mostrar la cantidad inicial en el input
             input.value = quantity.toString();
-            updatePedido(title, quantity); // Actualizamos el pedido y recalculamos el total
-            checkInputs(); // Revisar si hay valores para mostrar el botón de "siguiente"
+
+            // Incrementar cantidad al hacer clic en "plus"
+            btnPlus.addEventListener("click", () => {
+                quantity++;
+                input.value = quantity.toString();
+                updatePedido(title, quantity); // Actualizamos el pedido y recalculamos el total
+                checkInputs(); // Revisar si hay valores para mostrar el botón de "siguiente"
+            });
+
+            // Decrementar cantidad al hacer clic en "minus"
+            btnMinus.addEventListener("click", () => {
+                quantity--;
+                if (quantity < 0) quantity = 0; // Asegurar que no haya valores negativos
+                input.value = quantity.toString();
+                updatePedido(title, quantity); // Actualizamos el pedido y recalculamos el total
+                checkInputs(); // Revisar si hay valores para mostrar el botón de "siguiente"
+            });
         });
 
-        // Decrementar cantidad al hacer clic en "minus"
-        btnMinus.addEventListener("click", () => {
-            quantity--;
-            if (quantity < 0) quantity = 0; // Asegurar que no haya valores negativos
-            input.value = quantity.toString();
-            updatePedido(title, quantity); // Actualizamos el pedido y recalculamos el total
-            checkInputs(); // Revisar si hay valores para mostrar el botón de "siguiente"
-        });
+        // Al cargar la página, oculta el botón "NextButton" si todos los inputs están vacíos o en "0"
+        checkInputs();
     });
-
-    // Al cargar la página, oculta el botón "NextButton" si todos los inputs están vacíos o en "0"
-    checkInputs();
 </script>
