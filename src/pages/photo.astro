@@ -10,13 +10,15 @@ import { addCartItem, cartItems } from "../stores/cartStore";
 <Layout title="Agregar foto">
     <main class="flex flex-col w-full justify-center items-center text-center px-4 pt-20 space-y-10">
         <SectionContainer>
-            <h2 class="text-2xl font-semibold">Agrega la foto que deseas enviar a esa persona especial</h2>
+            <div class="flex flex-col items-center justify-center space-y-2">
+                <h2 class="text-2xl font-semibold">Agrega la foto que deseas enviar a esa persona especial</h2>
 
-            <div class="flex items-center gap-2 py-3 px-5 bg-gradient-to-r from-purple-900 via-purple-800 to-purple-700 rounded-xl font-bold">
-                <button id="uploadButton" class="">
-                    Seleccionar foto
-                </button>
-                <PhotoIcon class="size-6" />
+                <div class="w-56 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-purple-900 via-purple-800 to-purple-700 rounded-xl font-bold">
+                    <button id="uploadButton" class="">
+                        Seleccionar foto
+                    </button>
+                    <PhotoIcon class="size-6" />
+                </div>
             </div>
     
             <!-- Input oculto para seleccionar la foto -->
@@ -29,10 +31,13 @@ import { addCartItem, cartItems } from "../stores/cartStore";
         </SectionContainer>
 
         <SectionContainer>
-            <div class="space-y-2">
-                <h2 class="text-2xl font-semibold">Escribe tu mensaje a dedicar</h2>
+            <div class="-space-y-1">
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-semibold">Escribe tu mensaje a dedicar</h2>
                 <textarea id="message" placeholder="Escribe tu dedicatoria" maxlength="40" class="w-full h-24 p-4 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none"></textarea>
-                <p id="charCount" class="text-sm text-gray-400">40 caracteres restantes</p>
+                </div>
+                
+                <p id="charCount" class="text-xs text-gray-400 text-right">40 caracteres restantes</p>
             </div>
             <div id="continue-without-photo">
                 <button><a href="/order-info" class="bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-transparent bg-clip-text font-bold">Continuar sin foto</a></button>
@@ -111,8 +116,10 @@ import { addCartItem, cartItems } from "../stores/cartStore";
         if (remainingChars <= 0) {
             charCount.textContent = `0 caracteres restantes`;
             message.value = message.value.substring(0, maxChars); // Limitar el texto a 40 caracteres
+            charCount.classList.add("text-red-500");
         } else {
             charCount.textContent = `${remainingChars} caracteres restantes`;
+            charCount.classList.remove("text-red-500");
         }
 
         savePhotoAndMessage();
