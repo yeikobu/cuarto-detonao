@@ -30,7 +30,7 @@ import { addCartItem, cartItems } from "../stores/cartStore";
             </div>
         </SectionContainer>
 
-        <SectionContainer>
+        <section id="message-container" class="hidden">
             <div class="-space-y-1">
                 <div class="space-y-2">
                     <h2 class="text-2xl font-semibold">Escribe tu mensaje a dedicar</h2>
@@ -39,10 +39,11 @@ import { addCartItem, cartItems } from "../stores/cartStore";
                 
                 <p id="charCount" class="text-xs text-gray-400 text-right">40 caracteres restantes</p>
             </div>
-            <div id="continue-without-photo">
-                <button><a href="/order-info" class="bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-transparent bg-clip-text font-bold">Continuar sin foto</a></button>
-            </div>
-        </SectionContainer>
+        </section>
+
+        <div id="continue-without-photo">
+            <button><a href="/order-info" class="bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-transparent bg-clip-text font-bold">Continuar sin foto</a></button>
+        </div>
 
         <section id="bottom-sheet" class="md:w-3/5 w-full sticky bottom-5 flex flex-col justify-center gap-y-4 p-4 rounded-3xl bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0 ">
             <div class="flex flex-row items-center justify-center">
@@ -93,6 +94,7 @@ import { addCartItem, cartItems } from "../stores/cartStore";
     const uploadButton = document.getElementById('uploadButton') as HTMLButtonElement;
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     const preview = document.getElementById('preview') as HTMLImageElement;
+    const messageContainer = document.getElementById('message-container') as HTMLElement;
     const message = document.getElementById('message') as HTMLTextAreaElement;
     const bottomSheet = document.getElementById('bottom-sheet') as HTMLElement;
     const continueWithoutPhoto = document.getElementById('continue-without-photo') as HTMLElement;
@@ -101,7 +103,7 @@ import { addCartItem, cartItems } from "../stores/cartStore";
     const totalOfRosesToPay = document.getElementById("total-roses-to-pay") as HTMLElement;
     const totalToPayElement = document.getElementById("total-to-pay") as HTMLElement;
 
-    const maxChars = 40; // Límite máximo de caracteres
+    const maxChars = 40; // Límite máximo de caracteres para el mensaje
     let photoDataUrl = "";
 
     // Abrir la interfaz de selección de archivos al hacer clic en el botón
@@ -121,10 +123,11 @@ import { addCartItem, cartItems } from "../stores/cartStore";
                 photoDataUrl = preview.src; 
                 preview.classList.remove('hidden'); // Mostrar el preview de la imagen
                 uploadButton.textContent = 'Cambiar foto'; // Cambiar el texto del botón
+                messageContainer.classList.remove('hidden'); // Mostrar el contenedor de mensaje
                 savePhotoAndMessage(); // Guardar la foto y el mensaje en el estado global
                 checkInputs();
             };
-            
+
             reader.readAsDataURL(file); 
         }
     });
@@ -243,9 +246,17 @@ import { addCartItem, cartItems } from "../stores/cartStore";
     const currentCart = cartItems.get(); // Obtener el carrito del estado global
     const currentItem = currentCart.find(item => item.title === "Rosa con dedicatoria");
 
-    if (currentItem?.message != "") {
+    if (currentItem?.message) {
       message.value = currentItem?.message || ""; // Cargar el mensaje del carrito
     }
 
+    if (currentItem?.photo) {
+        photoDataUrl = currentItem?.photo || "" // Cargar la foto del carrito
+        preview.src = photoDataUrl; 
+        preview.classList.remove('hidden'); 
+        uploadButton.textContent = 'Cambiar foto'; 
+        messageContainer.classList.remove('hidden');
+    }
+    
     checkInputs();
 </script>
