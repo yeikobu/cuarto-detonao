@@ -124,7 +124,7 @@ import { addCartItem, cartItems } from "../stores/cartStore";
                 savePhotoAndMessage(); // Guardar la foto y el mensaje en el estado global
                 checkInputs();
             };
-            
+
             reader.readAsDataURL(file); 
         }
     });
@@ -243,9 +243,17 @@ import { addCartItem, cartItems } from "../stores/cartStore";
     const currentCart = cartItems.get(); // Obtener el carrito del estado global
     const currentItem = currentCart.find(item => item.title === "Rosa con dedicatoria");
 
-    if (currentItem?.message != "") {
+    if (currentItem?.message) {
       message.value = currentItem?.message || ""; // Cargar el mensaje del carrito
     }
 
+    if (currentItem?.photo) {
+        photoDataUrl = currentItem?.photo || "" // Cargar la foto del carrito
+        console.log(photoDataUrl);
+        preview.src = photoDataUrl; 
+        preview.classList.remove('hidden'); 
+        uploadButton.textContent = 'Cambiar foto'; 
+    }
+    
     checkInputs();
 </script>
