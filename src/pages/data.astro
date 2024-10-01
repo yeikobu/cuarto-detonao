@@ -1,5 +1,30 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const courses = [
+    "Séptimo A", 
+    "Séptimo B",
+    "Octavo A",
+    "Octavo B",
+    "Primero Medio A",
+    "Primero Medio B",
+    "Primero Medio C",
+    "Primero Medio D",
+    "Segundo Medio A",
+    "Segundo Medio B",
+    "Segundo Medio C",
+    "Segundo Medio D",
+    "Tercero Medio A", 
+    "Tercero Medio B",
+    "Tercero Medio C",
+    "Tercero Medio D",
+    "Cuarto Medio A",
+    "Cuarto Medio B",
+    "Cuarto Medio C",
+    "Cuarto Medio D",
+    "Pofesor", 
+    "Personal del liceo",
+]
 ---
 
 <Layout title="Agrega tus datos y los de esa persona especial">
@@ -27,7 +52,13 @@ import Layout from "../layouts/Layout.astro";
 
                     <div class="flex flex-col justify-center items-start">
                         <label for="sender-course" class="text-left">Curso (obligatorio)</label>
-                        <input id="sender-course" type="text" class="border-2 border-gray-300 p-2 rounded-lg w-full" placeholder="Ingresa tu curso" required>
+                        <select name="sender-course" id="sender-course" class="border-2 border-gray-300 p-2 rounded-lg w-full" required>
+                            <!-- Placeholder -->
+                            <option value="" disabled selected class="">Selecciona tu curso</option>
+                            {   courses.map((course) => (
+                                <option value={course}>{course}</option>
+                            ))   }
+                        </select>
                     </div>
 
                     <div class="flex items-center space-x-2">
@@ -61,50 +92,112 @@ import Layout from "../layouts/Layout.astro";
 
                     <div class="flex flex-col justify-center items-start">
                         <label for="receiver-course" class="text-left">Curso (obligatorio)</label>
-                        <input id="receiver-course" type="text" class="border-2 border-gray-300 p-2 rounded-lg w-full" placeholder="Ingresa su curso" required>
+                        <select name="receiver-course" id="receiver-course" class="border-2 border-gray-300 p-2 rounded-lg w-full" required>
+                            <!-- Placeholder -->
+                            <option value="" disabled selected class="">Selecciona su curso</option>
+                            {   courses.map((course) => (
+                                <option value={course}>{course}</option>
+                            ))   }
+                        </select>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Botón para continuar -->
-        <button id="continue-button" class="bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-white font-bold py-3 px-5 rounded-lg hidden">
-            Continuar
+        <button>
+            <a href="/resume"  id="continue-button" class="sticky bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-white font-bold py-3 px-5 rounded-lg hidden">Continuar</a>
         </button>
     </main>
-
-    <script>
-        // Obtener los elementos
-        const senderName = document.getElementById('sender-name') as HTMLInputElement;
-        const senderLastname = document.getElementById('sender-lastname') as HTMLInputElement;
-        const senderCourse = document.getElementById('sender-course') as HTMLInputElement;
-        const receiverName = document.getElementById('receiver-name') as HTMLInputElement;
-        const receiverLastname = document.getElementById('receiver-lastname') as HTMLInputElement;
-        const receiverCourse = document.getElementById('receiver-course') as HTMLInputElement;
-        const continueButton = document.getElementById('continue-button') as HTMLButtonElement;
-
-        // Función para verificar si todos los campos obligatorios están llenos
-        function checkFields() {
-            if (
-                senderName.value.trim() !== '' &&
-                senderLastname.value.trim() !== '' &&
-                senderCourse.value.trim() !== '' &&
-                receiverName.value.trim() !== '' &&
-                receiverLastname.value.trim() !== '' &&
-                receiverCourse.value.trim() !== ''
-            ) {
-                continueButton.classList.remove('hidden');
-            } else {
-                continueButton.classList.add('hidden');
-            }
-        }
-
-        // Agregar eventos de input para verificar en tiempo real
-        senderName.addEventListener('input', checkFields);
-        senderLastname.addEventListener('input', checkFields);
-        senderCourse.addEventListener('input', checkFields);
-        receiverName.addEventListener('input', checkFields);
-        receiverLastname.addEventListener('input', checkFields);
-        receiverCourse.addEventListener('input', checkFields);
-    </script>
 </Layout>
+
+<style>
+ 
+</style>
+
+<script>
+    import { formData, updateFormData } from "../stores/formStore"; 
+
+    // Obtener los elementos
+    const senderName = document.getElementById('sender-name') as HTMLInputElement;
+    const senderLastname = document.getElementById('sender-lastname') as HTMLInputElement;
+    const senderNickname = document.getElementById('sender-nickname') as HTMLInputElement;
+    const senderCourse = document.getElementById('sender-course') as HTMLSelectElement;
+    const receiverName = document.getElementById('receiver-name') as HTMLInputElement;
+    const receiverLastname = document.getElementById('receiver-lastname') as HTMLInputElement;
+    const receiverNickname = document.getElementById('receiver-nickname') as HTMLInputElement;
+    const receiverCourse = document.getElementById('receiver-course') as HTMLSelectElement;
+    const continueButton = document.getElementById('continue-button') as HTMLButtonElement;
+
+    // Función para verificar si todos los campos obligatorios están llenos
+    function checkFields() {
+        if (
+            senderName.value.trim() !== '' &&
+            senderLastname.value.trim() !== '' &&
+            senderNickname.value.trim() !== '' &&
+            senderCourse.value.trim() !== '' &&
+            receiverName.value.trim() !== '' &&
+            receiverLastname.value.trim() !== '' &&
+            receiverCourse.value.trim() !== ''
+        ) {
+            continueButton.classList.remove('hidden');
+        } else {
+            continueButton.classList.add('hidden');
+        }
+    }
+   
+    const currentForm = formData.get();
+
+    if (currentForm?.sender) {
+        senderName.value = currentForm?.sender?.name || "";
+        senderLastname.value = currentForm?.sender?.lastname || "";
+        senderNickname.value = currentForm?.sender?.nickname || "";
+        senderCourse.value = currentForm?.sender?.course || "";
+        senderName.classList.remove('hidden');
+        senderLastname.classList.remove('hidden');
+        senderCourse.classList.remove('hidden');
+    }
+
+    if (currentForm?.recipient) {
+        receiverName.value = currentForm?.recipient?.name || "";
+        receiverLastname.value = currentForm?.recipient?.lastname || "";
+        receiverNickname.value = currentForm?.recipient?.nickname || "";
+        receiverCourse.value = currentForm?.recipient?.course || "";
+        receiverName.classList.remove('hidden');
+        receiverLastname.classList.remove('hidden');
+        receiverCourse.classList.remove('hidden');
+    }
+
+
+    // Agregar eventos de input para verificar en tiempo real
+    senderName.addEventListener('input', checkFields);
+    senderLastname.addEventListener('input', checkFields);
+    senderNickname.addEventListener('input', checkFields);
+    senderCourse.addEventListener('input', checkFields);
+    receiverName.addEventListener('input', checkFields);
+    receiverLastname.addEventListener('input', checkFields);
+    receiverNickname.addEventListener('input', checkFields);
+    receiverCourse.addEventListener('input', checkFields);
+
+    continueButton.addEventListener('click', () => {
+        const newFormData = {
+            sender: {
+                name: senderName.value,
+                lastname: senderLastname.value,
+                nickname: senderNickname.value,
+                course: senderCourse.value,
+                anonymous: false
+            },
+            recipient: {
+                name: receiverName.value,
+                lastname: receiverLastname.value,
+                nickname: receiverNickname.value,
+                course: receiverCourse.value
+            }
+        };
+
+        updateFormData(newFormData);
+    });
+
+    checkFields();
+</script>
