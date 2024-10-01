@@ -55,7 +55,7 @@ import { roses } from "../data/roses"
             </div>
 
             <div class="flex justify-around items-center">
-                <div>
+                <div id="button-without-foto">
                     <button><a href="/data" class="bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-transparent bg-clip-text font-bold">Sin foto</a></button>
                 </div>
                 <div>
@@ -68,7 +68,7 @@ import { roses } from "../data/roses"
 
 <script>
     import { roses } from "../data/roses";
-    import { addCartItem, cartItems } from "../stores/cartStore";
+    import { addCartItem, cartItems, updateCart } from "../stores/cartStore";
 
     // Esperar a que el DOM esté completamente cargado
     document.addEventListener("DOMContentLoaded", () => {
@@ -76,9 +76,14 @@ import { roses } from "../data/roses"
         const btnNext = document.getElementById("bottom-sheet") as HTMLElement;
         const totalOfRoses = document.getElementById("total-roses") as HTMLElement;
         const totalToPayElement = document.getElementById("total-to-pay") as HTMLElement;
+        const buttonWithoutFoto = document.getElementById('button-without-foto') as HTMLButtonElement;
 
         // Cargar el carrito inicial desde la tienda global
         const currentCart = cartItems.get();
+
+        buttonWithoutFoto.addEventListener('click', () => { 
+            updateCart(currentCart)
+        });
         
         // Sincronizar la UI con los datos del carrito almacenado en el estado global
         currentCart.forEach(item => {

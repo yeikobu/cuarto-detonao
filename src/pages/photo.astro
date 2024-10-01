@@ -189,9 +189,8 @@ import { addCartItem, cartItems } from "../stores/cartStore";
     }
 
     function deletePhotoAndMessage() {
-        const index = currentCart.findIndex(item => item.title === "Rosa con dedicatoria");
-        currentCart.splice(index, 1);
-        updateCart(currentCart);
+        const filteredCart = currentCart.filter(item => item.title !== "Rosa con dedicatoria");
+        updateCart(filteredCart);
     }
 
     // Función para verificar si mostrar el Bottom Sheet
