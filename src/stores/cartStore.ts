@@ -40,3 +40,9 @@ export function clearCart() {
     cartItems.set([]); // Limpiar el estado global
     localStorage.removeItem('cart'); // Limpiar el Local Storage
 }
+
+//actualizar el carrito
+export function updateCart(newCart: CartItem[]) {
+    cartItems.set(newCart);
+    saveCartToLocalStorage(newCart);
+}
