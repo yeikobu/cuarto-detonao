@@ -8,54 +8,54 @@ import Layout from "../layouts/Layout.astro";
 
         <!-- Sección de resumen del remitente -->
         <section id="sender-summary" class="w-full max-w-lg flex flex-col items-start justify-center">
-            <h3 class="text-xl font-semibold">Datos del remitente</h3>
-            <div  class="flex flex-col items-start justify-center w-full max-w-lg p-4 border-2 border-neutral-900/90 bg-neutral-950/80 rounded-2xl space-y-1">
+            <h3 class="text-xl font-semibold">Tus datos</h3>
+            <div class="flex flex-col items-start justify-center w-full max-w-lg p-4 border-2 border-neutral-900/90 bg-neutral-950/80 rounded-2xl space-y-1">
                 <div class="flex flex-row justify-between items-center w-full">
                     <strong>Nombre:</strong>
-                    <p> <span id="sender-name"></span></p>
+                    <p><span id="sender-name"></span></p>
                 </div>
-                <hr class="border-neutral-900/90 w-full"/>
+                <hr class="border-neutral-900/90 w-full" />
                 <div class="flex flex-row justify-between items-center w-full">
-                    <strong>Apellido:</strong> 
+                    <strong>Apellido:</strong>
                     <p><span id="sender-lastname"></span></p>
                 </div>
-                <hr class="border-neutral-900/90 w-full"/>
+                <hr class="border-neutral-900/90 w-full" />
                 <div class="flex flex-row justify-between items-center w-full">
                     <strong>Pseudónimo:</strong>
-                    <p> <span id="sender-nickname"></span></p>
+                    <p><span id="sender-nickname"></span></p>
                 </div>
-                <hr class="border-neutral-900/90 w-full"/>
+                <hr class="border-neutral-900/90 w-full" />
                 <div class="flex flex-row justify-between items-center w-full">
                     <strong>Curso:</strong>
-                    <p> <span id="sender-course"></span></p>
+                    <p><span id="sender-course"></span></p>
                 </div>
-                <hr class="border-neutral-900/90 w-full"/>
+                <hr class="border-neutral-900/90 w-full" />
                 <div class="flex flex-row justify-between items-center w-full">
                     <strong>Enviar como anónimo:</strong>
-                    <p> <span id="sender-anonymous"></span></p>
+                    <p><span id="sender-anonymous"></span></p>
                 </div>
             </div>
         </section>
 
         <!-- Sección de resumen del destinatario -->
         <section id="recipient-summary" class="w-full max-w-lg flex flex-col items-start justify-center">
-            <h3 class="text-xl font-semibold">Datos del destinatario</h3>
-            <div  class="flex flex-col items-start justify-center w-full max-w-lg p-4 border-2 border-neutral-900/90 bg-neutral-950/80 rounded-2xl space-y-1">
+            <h3 class="text-xl font-semibold">Datos de la persona a la que le envías</h3>
+            <div class="flex flex-col items-start justify-center w-full max-w-lg p-4 border-2 border-neutral-900/90 bg-neutral-950/80 rounded-2xl space-y-1">
                 <div class="flex flex-row justify-between items-center w-full">
-                    <strong>Nombre:</strong> 
+                    <strong>Nombre:</strong>
                     <p><span id="recipient-name"></span></p>
                 </div>
-                <hr class="border-neutral-900/90 w-full"/>
+                <hr class="border-neutral-900/90 w-full" />
                 <div class="flex flex-row justify-between items-center w-full">
                     <strong>Apellido:</strong>
                     <p><span id="recipient-lastname"></span></p>
                 </div>
-                <hr class="border-neutral-900/90 w-full"/>
+                <hr class="border-neutral-900/90 w-full" />
                 <div class="flex flex-row justify-between items-center w-full">
                     <strong>Pseudónimo:</strong>
                     <p><span id="recipient-nickname"></span></p>
                 </div>
-                <hr class="border-neutral-900/90 w-full"/>
+                <hr class="border-neutral-900/90 w-full" />
                 <div class="flex flex-row justify-between items-center w-full">
                     <strong>Curso:</strong>
                     <p><span id="recipient-course"></span></p>
@@ -65,9 +65,23 @@ import Layout from "../layouts/Layout.astro";
 
         <!-- Sección de resumen de los items del carrito -->
         <section id="cart-summary" class="w-full max-w-lg flex flex-col items-start justify-center">
-            <h3 class="text-xl font-semibold">Resumen de las rosas</h3>
-            <div  class="flex flex-col items-start justify-center w-full max-w-lg p-4 border-2 border-neutral-900/90 bg-neutral-950/80 rounded-2xl space-y-1">
-                <div id="cart-items" class="w-full space-y-3"></div>
+            <h3 class="text-xl font-semibold">Detalles de tu pedido</h3>
+            <div class="flex flex-col items-start justify-center w-full max-w-lg p-4 border-2 border-neutral-900/90 bg-neutral-950/80 rounded-2xl space-y-1">
+                <div id="cart-items" class="w-full"></div>
+
+                <hr class="border-neutral-900/90 w-full"/>
+
+                <div class="flex flex-row justify-between items-center w-full">
+                    <p>Total por rosas</p>
+                    <p id="total-to-pay-roses" class="font-medium"></p>
+                </div>
+                <div class="flex flex-row justify-between items-center w-full">
+                    <p id="total-to-pay-photo" class="font-medium flex justify-between items-center w-full"></p>
+                </div>
+                <div class="flex flex-row justify-between items-center w-full text-xl">
+                    <strong>Total a pagar</strong>
+                    <p id="total-price" class="font-bold"></p>
+                </div>
             </div>
         </section>
 
@@ -76,77 +90,132 @@ import Layout from "../layouts/Layout.astro";
             Finalizar y reservar
         </button>
     </main>
-
-    <script>
-        import { formData, clearFormData } from "../stores/formStore";
-        import { cartItems, clearCart } from "../stores/cartStore";
-
-        const senderName = document.getElementById('sender-name') as HTMLParagraphElement;
-        const senderLastname = document.getElementById('sender-lastname') as HTMLParagraphElement;
-        const senderNickname = document.getElementById('sender-nickname') as HTMLParagraphElement;
-        const senderCourse = document.getElementById('sender-course') as HTMLParagraphElement;
-        const senderAnonymous = document.getElementById('sender-anonymous') as HTMLParagraphElement;
-        const recipientName = document.getElementById('recipient-name') as HTMLParagraphElement;
-        const recipientLastname = document.getElementById('recipient-lastname') as HTMLParagraphElement;
-        const recipientNickname = document.getElementById('recipient-nickname') as HTMLParagraphElement;
-        const recipientCourse = document.getElementById('recipient-course') as HTMLParagraphElement;
-
-
-        // Función para renderizar los datos del formulario en el DOM
-        function renderFormData() {
-            const formState = formData.get();
-            senderName.textContent = formState.sender.name || 'No especificado';
-            senderLastname.textContent = formState.sender.lastname || 'No especificado';
-            senderNickname.textContent = formState.sender.nickname || 'No especificado';
-            senderCourse.textContent = formState.sender.course || 'No especificado';
-            senderAnonymous.textContent = formState.sender.anonymous ? 'Sí' : 'No';
-            
-            recipientName.textContent = formState.recipient.name || 'No especificado';
-            recipientLastname.textContent = formState.recipient.lastname || 'No especificado';
-            recipientNickname.textContent = formState.recipient.nickname || 'No especificado';
-            recipientCourse.textContent = formState.recipient.course || 'No especificado';
-        }
-
-        // Función para renderizar los items del carrito en el DOM
-        function renderCartItems() {
-            const cartState = cartItems.get();
-            const cartItemsContainer = document.getElementById('cart-items') as HTMLDivElement;
-            cartItemsContainer.innerHTML = ''; // Limpiar el contenedor
-
-            if (cartState.length > 0) {
-                cartState.forEach(item => {
-                    const itemElement = document.createElement('div');
-                    itemElement.innerHTML = `
-                        <div class="flex flex-row items-center justify-between w-full"> 
-                            <p>${item.title == "Rosa con dedicatoria" ? "" : item.title}</p>
-                            <p>${item.title == "Rosa con dedicatoria" ? "" :item.quantity}</p>
-                        </div>
-                        <hr class="border-neutral-900/90 w-full"/>
-                        <div class="flex flex-col items-start justify-between w-full"> 
-                            ${item.message ? `<strong>Dedicatoria:</strong> <p>${item.message}</p>` : ''}
-                        </div>
-                        <div class="flex flex-col items-center justify-center w-full "> 
-                            ${item.photo ? `<img src="${item.photo}" alt="Foto seleccionada" class="size-40 object-cover rounded-lg" />` : ''}
-                        </div>
-                    `;
-                    cartItemsContainer.appendChild(itemElement);
-                });
-            } else {
-                cartItemsContainer.textContent = 'No tienes rosas reservadas.';
-            }
-        }
-
-        // Renderizar los datos del formulario y el carrito al cargar la página
-        renderFormData();
-        renderCartItems();
-
-        // Finalizar y limpiar los datos
-        const finalizeButton = document.getElementById('finalize-button') as HTMLButtonElement;
-        finalizeButton.addEventListener('click', () => {
-            clearCart();
-            clearFormData();
-            alert('Tu reserva ha sido finalizada.');
-            window.location.reload(); // Recargar la página para actualizar el estado
-        });
-    </script>
 </Layout>
+
+<script>
+    import { formData, clearFormData } from "../stores/formStore";
+    import { cartItems, clearCart } from "../stores/cartStore";
+
+    const senderName = document.getElementById('sender-name') as HTMLParagraphElement;
+    const senderLastname = document.getElementById('sender-lastname') as HTMLParagraphElement;
+    const senderNickname = document.getElementById('sender-nickname') as HTMLParagraphElement;
+    const senderCourse = document.getElementById('sender-course') as HTMLParagraphElement;
+    const senderAnonymous = document.getElementById('sender-anonymous') as HTMLParagraphElement;
+    const recipientName = document.getElementById('recipient-name') as HTMLParagraphElement;
+    const recipientLastname = document.getElementById('recipient-lastname') as HTMLParagraphElement;
+    const recipientNickname = document.getElementById('recipient-nickname') as HTMLParagraphElement;
+    const recipientCourse = document.getElementById('recipient-course') as HTMLParagraphElement;
+    const totalPriceElement = document.getElementById('total-price') as HTMLParagraphElement;
+    const totalToPayRoses = document.getElementById('total-to-pay-roses') as HTMLParagraphElement;
+    const totalToPayPhoto = document.getElementById('total-to-pay-photo') as HTMLParagraphElement;
+
+    const cartState = cartItems.get();
+
+    // Función para renderizar los datos del formulario en el DOM
+    function renderFormData() {
+        const formState = formData.get();
+        senderName.textContent = formState.sender.name || 'No especificado';
+        senderLastname.textContent = formState.sender.lastname || 'No especificado';
+        senderNickname.textContent = formState.sender.nickname || 'No especificado';
+        senderCourse.textContent = formState.sender.course || 'No especificado';
+        senderAnonymous.textContent = formState.sender.anonymous ? 'Sí' : 'No';
+        
+        recipientName.textContent = formState.recipient.name || 'No especificado';
+        recipientLastname.textContent = formState.recipient.lastname || 'No especificado';
+        recipientNickname.textContent = formState.recipient.nickname || 'No especificado';
+        recipientCourse.textContent = formState.recipient.course || 'No especificado';
+    }
+
+    let totalRoses = 0;
+
+    // Función para calcular el total a pagar
+    function calculateTotalPrice() {
+        let hasPhoto = false;
+
+        cartState.forEach(item => {
+            if (item.title === "Rosa con dedicatoria") {
+                totalRoses += item.quantity - 1;
+                if (item.photo) {
+                    hasPhoto = true;
+                }
+            } else { 
+                totalRoses += item.quantity;
+            }
+        });
+
+        let totalPrice = 0;
+
+        // Calcular el precio de las rosas
+        const setsOfThree = Math.floor(totalRoses / 3);
+        const remainingRoses = totalRoses % 3;
+        totalPrice = setsOfThree * 5000 + remainingRoses * 2000;
+        totalToPayRoses.innerHTML = `$${setsOfThree * 5000 + remainingRoses * 2000}`;
+
+
+        // Agregar 1000 por la foto si existe
+        if (hasPhoto) {
+            totalPrice += 1000;
+        }
+
+        return totalPrice;
+    }
+
+    const totalPrice = calculateTotalPrice();
+
+    // Función para renderizar los items del carrito en el DOM
+    function renderCartItems() {
+        const cartItemsContainer = document.getElementById('cart-items') as HTMLDivElement;
+        cartItemsContainer.innerHTML = ''; // Limpiar el contenedor
+
+        if (cartState.length > 0) {
+            cartState.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.innerHTML = `
+                    <div class="flex flex-row items-center justify-between w-full"> 
+                        <p>${item.title === "Rosa con dedicatoria" ? "" : item.title}</p>
+                        <p>${item.title === "Rosa con dedicatoria" ? "" : item.quantity}</p>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center w-full pb-5"> 
+                        ${item.photo ? `<img src="${item.photo}" alt="Foto seleccionada" class="size-40 object-cover rounded-lg" />` : ''}
+                    </div>
+
+                    <hr class="border-neutral-900/90 w-full"/>
+
+                    <div class="flex flex-col items-start justify-between w-full py-3"> 
+                        ${item.message ? `<p>Dedicatoria:</p> <p class="text-balance">${item.message}</p>` : ''}
+                    </div>
+                `;
+
+                totalToPayPhoto.innerHTML = `${item.message ? `
+                <div class="flex flex-row justify-between items-center w-full">
+                    <p>Foto con dedicatoria </p>
+                    <p>$1000</p>
+                </div>
+                ` : 
+                ''}`;
+
+                cartItemsContainer.appendChild(itemElement);
+            });
+            
+
+
+            totalPriceElement.textContent = `$${totalPrice}`;
+        } else {
+            cartItemsContainer.textContent = 'No tienes rosas reservadas.';
+        }
+    }
+
+    // Renderizar los datos del formulario y el carrito al cargar la página
+    renderFormData();
+    renderCartItems();
+
+    // Finalizar y limpiar los datos
+    const finalizeButton = document.getElementById('finalize-button') as HTMLButtonElement;
+    finalizeButton.addEventListener('click', () => {
+        clearCart();
+        clearFormData();
+        alert('Tu reserva ha sido finalizada.');
+        window.location.reload(); // Recargar la página para actualizar el estado
+    });
+</script>
