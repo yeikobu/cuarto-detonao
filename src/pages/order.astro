@@ -3,32 +3,72 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Resumen de tu reserva">
-    <main class="flex flex-col w-full justify-center items-center text-center px-4 pt-20 space-y-10">
+    <main class="flex flex-col w-full justify-center items-center text-center px-4 pt-20 pb-10 space-y-10">
         <h2 class="text-3xl font-semibold">Resumen de tu reserva</h2>
 
         <!-- Sección de resumen del remitente -->
-        <section id="sender-summary" class="flex flex-col items-start justify-center w-full max-w-lg px-5 py-5 border-2 border-gray-300 rounded-lg space-y-3">
+        <section id="sender-summary" class="w-full max-w-lg flex flex-col items-start justify-center">
             <h3 class="text-xl font-semibold">Datos del remitente</h3>
-            <p><strong>Nombre:</strong> <span id="sender-name"></span></p>
-            <p><strong>Apellido:</strong> <span id="sender-lastname"></span></p>
-            <p><strong>Pseudónimo:</strong> <span id="sender-nickname"></span></p>
-            <p><strong>Curso:</strong> <span id="sender-course"></span></p>
-            <p><strong>Enviar como anónimo:</strong> <span id="sender-anonymous"></span></p>
+            <div  class="flex flex-col items-start justify-center w-full max-w-lg p-4 border-2 border-neutral-900/90 bg-neutral-950/80 rounded-2xl space-y-1">
+                <div class="flex flex-row justify-between items-center w-full">
+                    <strong>Nombre:</strong>
+                    <p> <span id="sender-name"></span></p>
+                </div>
+                <hr class="border-neutral-900/90 w-full"/>
+                <div class="flex flex-row justify-between items-center w-full">
+                    <strong>Apellido:</strong> 
+                    <p><span id="sender-lastname"></span></p>
+                </div>
+                <hr class="border-neutral-900/90 w-full"/>
+                <div class="flex flex-row justify-between items-center w-full">
+                    <strong>Pseudónimo:</strong>
+                    <p> <span id="sender-nickname"></span></p>
+                </div>
+                <hr class="border-neutral-900/90 w-full"/>
+                <div class="flex flex-row justify-between items-center w-full">
+                    <strong>Curso:</strong>
+                    <p> <span id="sender-course"></span></p>
+                </div>
+                <hr class="border-neutral-900/90 w-full"/>
+                <div class="flex flex-row justify-between items-center w-full">
+                    <strong>Enviar como anónimo:</strong>
+                    <p> <span id="sender-anonymous"></span></p>
+                </div>
+            </div>
         </section>
 
         <!-- Sección de resumen del destinatario -->
-        <section id="recipient-summary" class="flex flex-col items-start justify-center w-full max-w-lg px-5 py-5 border-2 border-gray-300 rounded-lg space-y-3">
+        <section id="recipient-summary" class="w-full max-w-lg flex flex-col items-start justify-center">
             <h3 class="text-xl font-semibold">Datos del destinatario</h3>
-            <p><strong>Nombre:</strong> <span id="recipient-name"></span></p>
-            <p><strong>Apellido:</strong> <span id="recipient-lastname"></span></p>
-            <p><strong>Pseudónimo:</strong> <span id="recipient-nickname"></span></p>
-            <p><strong>Curso:</strong> <span id="recipient-course"></span></p>
+            <div  class="flex flex-col items-start justify-center w-full max-w-lg p-4 border-2 border-neutral-900/90 bg-neutral-950/80 rounded-2xl space-y-1">
+                <div class="flex flex-row justify-between items-center w-full">
+                    <strong>Nombre:</strong> 
+                    <p><span id="recipient-name"></span></p>
+                </div>
+                <hr class="border-neutral-900/90 w-full"/>
+                <div class="flex flex-row justify-between items-center w-full">
+                    <strong>Apellido:</strong>
+                    <p><span id="recipient-lastname"></span></p>
+                </div>
+                <hr class="border-neutral-900/90 w-full"/>
+                <div class="flex flex-row justify-between items-center w-full">
+                    <strong>Pseudónimo:</strong>
+                    <p><span id="recipient-nickname"></span></p>
+                </div>
+                <hr class="border-neutral-900/90 w-full"/>
+                <div class="flex flex-row justify-between items-center w-full">
+                    <strong>Curso:</strong>
+                    <p><span id="recipient-course"></span></p>
+                </div>
+            </div>
         </section>
 
         <!-- Sección de resumen de los items del carrito -->
-        <section id="cart-summary" class="flex flex-col items-start justify-center w-full max-w-lg px-5 py-5 border-2 border-gray-300 rounded-lg space-y-3">
+        <section id="cart-summary" class="w-full max-w-lg flex flex-col items-start justify-center">
             <h3 class="text-xl font-semibold">Resumen de las rosas</h3>
-            <div id="cart-items" class="w-full space-y-3"></div>
+            <div  class="flex flex-col items-start justify-center w-full max-w-lg p-4 border-2 border-neutral-900/90 bg-neutral-950/80 rounded-2xl space-y-1">
+                <div id="cart-items" class="w-full space-y-3"></div>
+            </div>
         </section>
 
         <!-- Botón para finalizar y reservar -->
@@ -81,11 +121,12 @@ import Layout from "../layouts/Layout.astro";
                             <p>${item.title == "Rosa con dedicatoria" ? "" : item.title}</p>
                             <p>${item.title == "Rosa con dedicatoria" ? "" :item.quantity}</p>
                         </div>
+                        <hr class="border-neutral-900/90 w-full"/>
                         <div class="flex flex-col items-start justify-between w-full"> 
                             ${item.message ? `<strong>Dedicatoria:</strong> <p>${item.message}</p>` : ''}
                         </div>
                         <div class="flex flex-col items-center justify-center w-full "> 
-                            ${item.photo ? `<img src="${item.photo}" alt="Foto seleccionada" class="w-32 h-32 object-cover rounded-lg" />` : ''}
+                            ${item.photo ? `<img src="${item.photo}" alt="Foto seleccionada" class="size-40 object-cover rounded-lg" />` : ''}
                         </div>
                     `;
                     cartItemsContainer.appendChild(itemElement);
