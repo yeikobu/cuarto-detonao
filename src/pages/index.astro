@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import NextButton from '../components/NextButton.astro';
 import SectionContainer from '../components/SectionContainer.astro';
+import ChevronRigth from '../components/icons/ChevronRigth.astro';
 import "@fontsource-variable/onest";
 ---
 
@@ -33,7 +34,9 @@ import "@fontsource-variable/onest";
 		</SectionContainer>
 
 		<div class="w-full sticky bottom-0 flex justify-center pb-6">
-			<NextButton title="Quiero reservar" href="/roses" />
+			<NextButton title="Quiero reservar" href="/roses" >
+				<ChevronRigth class="size-6" />
+			</NextButton>
 		</div>
 		
 	</main>

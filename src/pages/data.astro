@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ChevronRigth from "../components/icons/ChevronRigth.astro"
 
 const courses = [
     "Séptimo A", 
@@ -106,7 +107,7 @@ const courses = [
 
         <!-- Botón para continuar -->
         <button>
-            <a href="/order"  id="continue-button" class="sticky bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-white font-bold py-3 px-5 rounded-lg hidden">Continuar</a>
+            <a href="/order"  id="continue-button" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950 via-purple-900 to-purple-950/90 rounded-xl font-bold">Continuar<ChevronRigth class="size-6"/></a>
         </button>
     </main>
 </Layout>

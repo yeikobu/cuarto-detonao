@@ -3,8 +3,6 @@ import Layout from "../layouts/Layout.astro"
 import PhotoIcon from "../components/icons/PhotoIcon.astro"
 import SectionContainer from "../components/SectionContainer.astro"
 import ChevronRigth from "../components/icons/ChevronRigth.astro"
-
-import { addCartItem, cartItems } from "../stores/cartStore";
 ---
 
 <Layout title="Agrega foto y dedicatoria">
@@ -16,7 +14,7 @@ import { addCartItem, cartItems } from "../stores/cartStore";
                     <p class="text-2xl font-semibold">por solo $1000</p>
                 </div>
 
-                <div class="w-56 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-purple-900 via-purple-800 to-purple-700 rounded-xl font-bold">
+                <div class="w-56 flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950/80 via-purple-900/90 to-purple-950/90 rounded-xl font-bold backdrop-blur-sm space-x-2">
                     <button id="uploadButton" class="">
                         Seleccionar foto
                     </button>
@@ -84,7 +82,7 @@ import { addCartItem, cartItems } from "../stores/cartStore";
                     <button id="button-without-foto"><a href="/data" class="bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-transparent bg-clip-text font-bold">Continuar sin foto</a></button>
                 </div>
                 <div>
-                    <button><a href="/data" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950 via-purple-900 to-purple-950 rounded-xl font-bold">Continuar<ChevronRigth class="size-6"/></a></button>
+                    <button><a href="/data" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950 via-purple-900 to-purple-950/90 rounded-xl font-bold">Continuar<ChevronRigth class="size-6"/></a></button>
                 </div>
             </div>
 		</section>
