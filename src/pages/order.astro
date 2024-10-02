@@ -110,10 +110,12 @@ import Layout from "../layouts/Layout.astro";
     const totalToPayPhoto = document.getElementById('total-to-pay-photo') as HTMLParagraphElement;
 
     const cartState = cartItems.get();
+;
 
     // Función para renderizar los datos del formulario en el DOM
     function renderFormData() {
         const formState = formData.get();
+        console.log(formState.sender.anonymous);
         senderName.textContent = formState.sender.name || 'No especificado';
         senderLastname.textContent = formState.sender.lastname || 'No especificado';
         senderNickname.textContent = formState.sender.nickname || 'No especificado';
