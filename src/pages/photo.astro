@@ -112,6 +112,7 @@ import { addCartItem, cartItems } from "../stores/cartStore";
 
     const currentCart = cartItems.get(); // Obtener el carrito del estado global
     const currentItem = currentCart.find(item => item.title === "Rosa con dedicatoria");
+    const filteredCart = currentCart.filter(item => item.title !== "Rosa con dedicatoria");
 
     if (currentItem?.message) {
       message.value = currentItem?.message || ""; // Cargar el mensaje del carrito
@@ -220,10 +221,9 @@ import { addCartItem, cartItems } from "../stores/cartStore";
 
     function calculateTotalToPayForRoses() {
         // Obtenemos el carrito desde la tienda global
-        const currentCart = cartItems.get();
 
         // Calculamos el total de rosas seleccionadas
-        const totalRoses = currentCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
+        const totalRoses = filteredCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
         let totalToPay = 0;
 
         if (totalRoses >= 3) {
@@ -248,10 +248,9 @@ import { addCartItem, cartItems } from "../stores/cartStore";
 
     function calculateTotal() {
         // Obtenemos el carrito desde la tienda global
-        const currentCart = cartItems.get();
 
         // Calculamos el total de rosas seleccionadas
-        const totalRoses = currentCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
+        const totalRoses = filteredCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
         let totalToPay = 0;
         const photoCost = 1000;
 
