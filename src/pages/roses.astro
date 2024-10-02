@@ -126,9 +126,10 @@ import { roses } from "../data/roses"
         function calculateTotal() {
             // Obtenemos el carrito desde la tienda global
             const currentCart = cartItems.get();
+            const filteredCart = currentCart.filter(item => item.title !== "Rosa con dedicatoria");
 
             // Calculamos el total de rosas seleccionadas
-            const totalRoses = currentCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
+            const totalRoses = filteredCart.reduce((acc, pedido) => acc + pedido.quantity, 0);
             let totalToPay = 0;
 
             if (totalRoses >= 3) {
