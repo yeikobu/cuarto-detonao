@@ -1,13 +1,74 @@
 ---
 
 ---
+
 <main class="flex flex-col w-full justify-center items-center text-center pt-20 px-10">
     <section class="max-w-[350px] relative">
         <img src="/Gengar.png" alt="Gengar" class="absolute bottom-16 size-20 object-contain z-20" />
-        <h1 class="relative text-5xl text-balance font-medium z-10">Las rosas del 
+        <h1 class="relative text-5xl text-balance font-medium z-10">
+            Las rosas del 
             <span class="bg-gradient-to-r  from-purple-800/70 via-purple-500/80 to-purple-800/80 text-transparent bg-clip-text font-bold">
                 IV° Detonao
             </span>
         </h1>
+       
     </section>
+
+    <div class="mt-4">
+        <p id="countdown" class=""></p>
+    </div>
 </main>
+
+<script>
+    // Obtener el elemento del DOM
+    const countdownElement = document.getElementById('countdown') as HTMLParagraphElement;
+
+    // Fecha de finalización de las reservas
+    const targetDate = new Date("2024-10-12T23:59:59").getTime(); // Fecha de ejemplo, cámbiala según tus necesidades
+
+    // Función que calcula el tiempo restante
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const timeRemaining = targetDate - now;
+
+        if (timeRemaining > 0) {
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            countdownElement.innerHTML = `
+            <div class="flex flex-col items-center justify-center gap-1 text-xs">
+                <div class="flex flex-row items-center justify-center gap-1 font-semibold">
+                    <div class="flex flex-col items-center justify-center gap-0 bg-neutral-950/80 rounded-lg w-20 h-16 px-4 py-2 border-2 border-neutral-900/90">
+                        <p>${days} </p>
+                        días
+                    </div>
+                    <div class="flex flex-col items-center justify-center gap-0 bg-neutral-950/80 rounded-lg w-20 h-16 px-4 py-2 border-2 border-neutral-900/90">
+                        <p>${hours} </p>
+                        horas
+                    </div>
+                    <div class="flex flex-col items-center justify-center gap-0 bg-neutral-950/80 rounded-lg w-20 h-16 px-4 py-2 border-2 border-neutral-900/90">
+                        <p>${minutes} </p>
+                        minutes
+                    </div>
+                    <div class="flex flex-col items-center justify-center gap-0 bg-neutral-950/80 rounded-lg w-20 h-16 px-4 py-2 border-2 border-neutral-900/90">
+                        <p>${seconds} </p>
+                        segundos
+                    </div>
+                </div>
+
+                <p class="text-xs text-stone-300"> Para finalizar las reservas</p>
+            </div>
+            `;
+        } else {
+            countdownElement.textContent = "Las reservas han finalizado.";
+        }
+    }
+
+    // Actualiza el contador cada segundo
+    setInterval(updateCountdown, 1000);
+
+    // Inicializar el contador al cargar la página
+    updateCountdown();
+</script>
