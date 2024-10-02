@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ChevronRigth from "../components/icons/ChevronRigth.astro"
 
 const courses = [
     "Séptimo A", 
@@ -22,7 +23,7 @@ const courses = [
     "Cuarto Medio B",
     "Cuarto Medio C",
     "Cuarto Medio D",
-    "Pofesor", 
+    "Profesor", 
     "Personal del liceo",
 ]
 ---
@@ -106,14 +107,10 @@ const courses = [
 
         <!-- Botón para continuar -->
         <button>
-            <a href="/order"  id="continue-button" class="sticky bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-white font-bold py-3 px-5 rounded-lg hidden">Continuar</a>
+            <a href="/order"  id="continue-button" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950 via-purple-900 to-purple-950/90 rounded-xl font-bold">Continuar<ChevronRigth class="size-6"/></a>
         </button>
     </main>
 </Layout>
-
-<style>
- 
-</style>
 
 <script>
     import { formData, updateFormData } from "../stores/formStore"; 
@@ -128,6 +125,7 @@ const courses = [
     const receiverNickname = document.getElementById('receiver-nickname') as HTMLInputElement;
     const receiverCourse = document.getElementById('receiver-course') as HTMLSelectElement;
     const continueButton = document.getElementById('continue-button') as HTMLButtonElement;
+    const senderAnonymous = document.getElementById('send-anonymously') as HTMLInputElement; // Cambié el ID aquí
 
     // Función para verificar si todos los campos obligatorios están llenos
     function checkFields() {
@@ -152,6 +150,7 @@ const courses = [
         senderLastname.value = currentForm?.sender?.lastname || "";
         senderNickname.value = currentForm?.sender?.nickname || "";
         senderCourse.value = currentForm?.sender?.course || "";
+        senderAnonymous.checked = currentForm?.sender?.anonymous;
         senderName.classList.remove('hidden');
         senderLastname.classList.remove('hidden');
         senderCourse.classList.remove('hidden');
@@ -167,7 +166,6 @@ const courses = [
         receiverCourse.classList.remove('hidden');
     }
 
-
     // Agregar eventos de input para verificar en tiempo real
     senderName.addEventListener('input', checkFields);
     senderLastname.addEventListener('input', checkFields);
@@ -177,6 +175,7 @@ const courses = [
     receiverLastname.addEventListener('input', checkFields);
     receiverNickname.addEventListener('input', checkFields);
     receiverCourse.addEventListener('input', checkFields);
+    senderAnonymous.addEventListener('click', checkFields);
 
     continueButton.addEventListener('click', () => {
         const newFormData = {
@@ -185,7 +184,7 @@ const courses = [
                 lastname: senderLastname.value,
                 nickname: senderNickname.value,
                 course: senderCourse.value,
-                anonymous: false
+                anonymous: senderAnonymous.checked
             },
             recipient: {
                 name: receiverName.value,
