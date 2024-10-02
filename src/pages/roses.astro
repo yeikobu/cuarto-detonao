@@ -119,9 +119,7 @@ import { roses } from "../data/roses"
         // Función para actualizar el pedido y la cantidad en el carrito global
         function updatePedido(title: string, quantity: number) {
             addCartItem({ title, quantity }); // Actualiza el carrito global y guarda en Local Storage
-            const filteredCart = currentCart.filter(item => item.quantity !== 0);
-            updateCart(filteredCart);
-            calculateTotal();
+            calculateTotal(); // Recalcular el total después de actualizar el carrito
         }
 
         // Función para calcular el total de rosas seleccionadas y el total a pagar
