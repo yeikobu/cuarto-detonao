@@ -150,7 +150,7 @@ import Layout from "../layouts/Layout.astro";
 
     // Función para crear el JSON de la reserva
     // Función para crear el JSON de la reserva
-    async function createReservationJson(photoUrl: string | null) {
+    async function createReservationJson(photoUrl: string) {
         const formState = formData.get() as FormData;
         const cartState = cartItems.get() as CartItem[];
         const filteredCartState = cartState.filter(item => item.title !== 'Rosa con dedicatoria');
@@ -321,14 +321,18 @@ import Layout from "../layouts/Layout.astro";
                 console.log('Usando la URL de la foto existente:', photoUrl);
             }
 
-            const reservationData = await createReservationJson(photoUrl);
+            console.log('Photo URL:', photoUrl);
+            const reservationData = await createReservationJson(photoUrl || "");
 
             const response = await fetch('http://localhost:4000/reserve', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(reservationData),
+                body: JSON.stringify({
+                    ...reservationData,
+                    foto_url: photoUrl 
+                }),
             });
 
             if (!response.ok) {
