@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Loader from "../components/icons/Loader.astro";
 import Check from "../components/icons/Check.astro";
+import Warn from "../components/icons/Warn.astro";
 ---
 
 <Layout title="Resumen de tu reserva">
@@ -92,12 +93,14 @@ import Check from "../components/icons/Check.astro";
             Finalizar y reservar
         </button>
 
-        <div id="loading-message" class="hidden justify-center items-center fixed w-screen min-h-screen -top-20 inset-0 bg-black/30 z-50">
+        <div id="loading-message" class="hidden justify-center items-center fixed w-screen min-h-screen -top-20 inset-0 bg-black/30 z-40">
+            <!-- Mensaje de creando reserva -->
             <div id="creating-reserve-message" class="w-80 absolute flex flex-col justify-center items-center gap-y-3 p-4 rounded-2xl border-2 border-neutral-900/60 bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0">
                 <Loader class="size-14 animate-spin text-purple-700" />
                 <p class="text-lg font-semibold">Creando reserva...</p>
             </div>
 
+            <!-- Mensaje de reserva creada -->
             <div id="reserve-created-message" class="w-80 absolute flex flex-col justify-center items-center gap-y-3 p-4 mx-6 rounded-2xl border-2 border-neutral-900/60 bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0">
                 <div class="flex flex-col items-center justify-center">
                     <Check class="size-14 text-green-700" />
@@ -107,8 +110,21 @@ import Check from "../components/icons/Check.astro";
 
                 <p>Número de reserva: <span id="reservation-number" class="font-black">30</span></p>
 
-                <button id="button-accept-reservation" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950/80 via-purple-900/90 to-purple-950/90 rounded-xl font-bold backdrop-blur-sm">
+                <button id="button-accept-reservation" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950/80 via-purple-900/90 to-purple-950/90 rounded-xl font-bold backdrop-blur-sm z-50">
                     <a href="/">Aceptar</a>
+                </button>
+            </div>
+
+            <!-- Mensaje de error al crear reserva -->
+            <div id="reserve-error-message" class="hidden w-80 absolute flex-col justify-center items-center gap-y-3 p-4 mx-6 rounded-2xl border-2 border-neutral-900/60 bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0">
+                <div class="flex flex-col items-center justify-center">
+                    <Warn class="size-12 text-red-700" />
+                    <p class="text-lg font-semibold">¡Hubo un error al crear la reserva!</p> 
+                    <p>Por favor, vuelve a intentarlo más tarde</p>
+                </div>
+
+                <button id="button-accept-error" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950/80 via-purple-900/90 to-purple-950/90 rounded-xl font-bold backdrop-blur-sm">
+                    Aceptar
                 </button>
             </div>
         </div>
@@ -331,19 +347,13 @@ import Check from "../components/icons/Check.astro";
         creatingReserveMessage.classList.remove('opacity-0');
         creatingReserveMessage.classList.remove('translate-y-24');
         creatingReserveMessage.classList.add('translate-y-0');
-
-        const buttonAcceptReservation = document.getElementById('button-accept-reservation') as HTMLButtonElement;
-
-        buttonAcceptReservation.addEventListener('click', () => {
-            clearCart();
-            clearFormData();
-        });
     }
 
     function showCreatedReserveMessage() {
         // Muestra mensaje de creando reserva
         const creatingReserveMessage = document.getElementById('creating-reserve-message') as HTMLElement;
         creatingReserveMessage.classList.add('opacity-0');
+        creatingReserveMessage.classList.add('hidden');
 
         //Muestra mensaje de reserva creada
         const reserveCreatedMeesage = document.getElementById('reserve-created-message') as HTMLElement;
@@ -351,12 +361,41 @@ import Check from "../components/icons/Check.astro";
         reserveCreatedMeesage.classList.remove('translate-y-24');
         reserveCreatedMeesage.classList.add('translate-y-0');
 
+        const buttonAcceptReservation = document.getElementById('button-accept-reservation') as HTMLButtonElement;
+
+        buttonAcceptReservation.addEventListener('click', () => {
+            console.log("tap");
+            clearCart();
+            clearFormData();
+        });
     }
 
-    // Función para ocultar el mensaje de carga
-    function hideLoadingMessage() {
-        const loadingMessage = document.getElementById('loading-message');
-        loadingMessage?.classList.add('hidden'); // Ocultar mensaje
+    function showErrorMessage() {
+        const loadingMessage = document.getElementById('loading-message') as HTMLElement;
+        loadingMessage.classList.add('flex')
+        loadingMessage.classList.remove('hidden');
+
+        //Muestra mensaje de error al crear reserva
+        const reserveErrorMessage = document.getElementById('reserve-error-message') as HTMLElement;
+        reserveErrorMessage.classList.remove('hidden');
+        reserveErrorMessage.classList.add('flex');
+        reserveErrorMessage.classList.remove('opacity-0');
+        reserveErrorMessage.classList.remove('translate-y-24');
+        reserveErrorMessage.classList.add('translate-y-0');
+
+        const buttonAcceptError = document.getElementById('button-accept-error') as HTMLButtonElement;
+
+        // Evento para aceptar el mensaje de error
+        buttonAcceptError.addEventListener('click', () => {
+            loadingMessage.classList.remove('flex')
+            loadingMessage.classList.add('hidden');
+
+            reserveErrorMessage.classList.add('opacity-0');
+            reserveErrorMessage.classList.add('translate-y-24');
+            reserveErrorMessage.classList.remove('translate-y-0');
+            reserveErrorMessage.classList.add('hidden');
+            reserveErrorMessage.classList.remove('flex');
+        });
     }
 
     // Actualizar la lógica del botón finalize para manejar imágenes en base64
@@ -406,9 +445,7 @@ import Check from "../components/icons/Check.astro";
             numberOfReservation.textContent = result.numero_reserva.toString();
             showCreatedReserveMessage();
         } catch (error) {
-            hideLoadingMessage();
-            console.error('Error al finalizar la reserva:', error);
-            alert('Error al finalizar la reserva');
+            showErrorMessage();
         }
     });
 
