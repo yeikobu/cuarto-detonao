@@ -311,7 +311,7 @@ import Layout from "../layouts/Layout.astro";
             // Si `photo` es una cadena base64, convertirla en un archivo `File`
             if (rosaConDedicatoria?.photo && rosaConDedicatoria.photo.startsWith('data:image/')) {
                 console.log('Convirtiendo base64 a archivo...');
-                const file = base64ToFile(rosaConDedicatoria.photo, `from${senderName.textContent}-to${recipientName.textContent}-at${new Date().toString()}.jpg`);
+                const file = base64ToFile(rosaConDedicatoria.photo, `from${senderName.textContent}${senderLastname.textContent}-to${recipientName.textContent}${recipientLastname.textContent}-at${new Date().toString()}.jpg`);
                 console.log('Subiendo la foto a Firebase...');
                 photoUrl = await uploadPhotoAndGetUrl(file);
                 console.log('Foto subida a Firebase, URL:', photoUrl);
