@@ -1,5 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Loader from "../components/icons/Loader.astro";
+import Check from "../components/icons/Check.astro";
 ---
 
 <Layout title="Resumen de tu reserva">
@@ -89,6 +91,27 @@ import Layout from "../layouts/Layout.astro";
         <button id="finalize-button" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950/80 via-purple-900/90 to-purple-950/90 rounded-xl font-bold backdrop-blur-sm">
             Finalizar y reservar
         </button>
+
+        <div id="loading-message" class="hidden justify-center items-center fixed w-screen min-h-screen -top-20 inset-0 bg-black/30 z-50">
+            <div id="creating-reserve-message" class="w-80 absolute flex flex-col justify-center items-center gap-y-3 p-4 rounded-2xl border-2 border-neutral-900/60 bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0">
+                <Loader class="size-14 animate-spin text-purple-700" />
+                <p class="text-lg font-semibold">Creando reserva...</p>
+            </div>
+
+            <div id="reserve-created-message" class="w-80 absolute flex flex-col justify-center items-center gap-y-3 p-4 mx-6 rounded-2xl border-2 border-neutral-900/60 bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0">
+                <div class="flex flex-col items-center justify-center">
+                    <Check class="size-14 text-green-700" />
+                    <p class="text-lg font-semibold">¡Reserva creada exitosamente!</p> 
+                    <p>Por favor, guarda tu número de reserva</p>
+                </div>
+
+                <p>Número de reserva: <span id="reservation-number" class="font-black">30</span></p>
+
+                <button id="button-accept-reservation" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950/80 via-purple-900/90 to-purple-950/90 rounded-xl font-bold backdrop-blur-sm">
+                    <a href="/">Aceptar</a>
+                </button>
+            </div>
+        </div>
     </main>
 </Layout>
 
@@ -299,12 +322,50 @@ import Layout from "../layouts/Layout.astro";
         return new File([u8arr], filename, { type: mime });
     }
 
+    function showLoadingMessage() {
+        const loadingMessage = document.getElementById('loading-message') as HTMLElement;
+        loadingMessage.classList.add('flex')
+        loadingMessage.classList.remove('hidden'); // Mostrar mensaje
+
+        const creatingReserveMessage = document.getElementById('creating-reserve-message') as HTMLElement;
+        creatingReserveMessage.classList.remove('opacity-0');
+        creatingReserveMessage.classList.remove('translate-y-24');
+        creatingReserveMessage.classList.add('translate-y-0');
+
+        const buttonAcceptReservation = document.getElementById('button-accept-reservation') as HTMLButtonElement;
+
+        buttonAcceptReservation.addEventListener('click', () => {
+            clearCart();
+            clearFormData();
+        });
+    }
+
+    function showCreatedReserveMessage() {
+        // Muestra mensaje de creando reserva
+        const creatingReserveMessage = document.getElementById('creating-reserve-message') as HTMLElement;
+        creatingReserveMessage.classList.add('opacity-0');
+
+        //Muestra mensaje de reserva creada
+        const reserveCreatedMeesage = document.getElementById('reserve-created-message') as HTMLElement;
+        reserveCreatedMeesage.classList.remove('opacity-0');
+        reserveCreatedMeesage.classList.remove('translate-y-24');
+        reserveCreatedMeesage.classList.add('translate-y-0');
+
+    }
+
+    // Función para ocultar el mensaje de carga
+    function hideLoadingMessage() {
+        const loadingMessage = document.getElementById('loading-message');
+        loadingMessage?.classList.add('hidden'); // Ocultar mensaje
+    }
 
     // Actualizar la lógica del botón finalize para manejar imágenes en base64
     finalizeButton.addEventListener('click', async () => {
         try {
             const cartState = cartItems.get();
             const rosaConDedicatoria = cartState.find(item => item.title === 'Rosa con dedicatoria');
+
+            showLoadingMessage();
 
             let photoUrl: string | null = null;
 
@@ -341,12 +402,11 @@ import Layout from "../layouts/Layout.astro";
 
             const result = await response.json();
             console.log('Reserva creada exitosamente:', result);
-
-            alert('Tu reserva ha sido finalizada exitosamente');
-            // clearCart();
-            // clearFormData();
-            // window.location.reload();
+            const numberOfReservation = document.getElementById('reservation-number') as HTMLParagraphElement;
+            numberOfReservation.textContent = result.numero_reserva.toString();
+            showCreatedReserveMessage();
         } catch (error) {
+            hideLoadingMessage();
             console.error('Error al finalizar la reserva:', error);
             alert('Error al finalizar la reserva');
         }
