@@ -403,6 +403,7 @@ import Warn from "../components/icons/Warn.astro";
         try {
             const cartState = cartItems.get();
             const rosaConDedicatoria = cartState.find(item => item.title === 'Rosa con dedicatoria');
+            const apiUrl = import.meta.env.PUBLIC_API_URL;
 
             showLoadingMessage();
 
@@ -424,7 +425,7 @@ import Warn from "../components/icons/Warn.astro";
             console.log('Photo URL:', photoUrl);
             const reservationData = await createReservationJson(photoUrl || "");
 
-            const response = await fetch('http://localhost:4000/reserve', {
+            const response = await fetch(`${apiUrl}/reserve`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -440,7 +441,6 @@ import Warn from "../components/icons/Warn.astro";
             }
 
             const result = await response.json();
-            console.log('Reserva creada exitosamente:', result);
             const numberOfReservation = document.getElementById('reservation-number') as HTMLParagraphElement;
             numberOfReservation.textContent = result.numero_reserva.toString();
             showCreatedReserveMessage();
