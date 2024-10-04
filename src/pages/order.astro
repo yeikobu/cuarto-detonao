@@ -95,6 +95,8 @@ import Layout from "../layouts/Layout.astro";
 <script>
     import { formData, clearFormData } from "../stores/formStore";
     import { cartItems, clearCart } from "../stores/cartStore";
+    import { app } from "../firebase/client";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
     const senderName = document.getElementById('sender-name') as HTMLParagraphElement;
     const senderLastname = document.getElementById('sender-lastname') as HTMLParagraphElement;
@@ -110,6 +112,74 @@ import Layout from "../layouts/Layout.astro";
     const totalToPayPhoto = document.getElementById('total-to-pay-photo') as HTMLParagraphElement;
 
     const cartState = cartItems.get();
+    // Inicializar Firebase Storage
+    const storage = getStorage(app);
+
+    let totalRoses = 0;
+
+    interface CartItem {
+        title: string;
+        quantity: number;
+        photo?: File | string; // Permitir que sea un File o una URL de string
+        message?: string;
+    }
+
+    interface FormData {
+        sender: {
+            name: string;
+            lastname: string;
+            nickname?: string;
+            course: string;
+            anonymous: boolean;
+        };
+        recipient: {
+            name: string;
+            lastname: string;
+            nickname?: string;
+            course: string;
+        };
+    }
+
+    // Función para subir la foto si es un archivo y obtener la URL
+    async function uploadPhotoAndGetUrl(file: File): Promise<string | null> {
+        if (!file) return null;
+        const storageRef = ref(storage, `fotos/${file.name}`);
+        const snapshot = await uploadBytes(storageRef, file);
+        return await getDownloadURL(snapshot.ref);
+    }
+
+    // Función para crear el JSON de la reserva
+    // Función para crear el JSON de la reserva
+    async function createReservationJson(photoUrl: string | null) {
+        const formState = formData.get() as FormData;
+        const cartState = cartItems.get() as CartItem[];
+        const filteredCartState = cartState.filter(item => item.title !== 'Rosa con dedicatoria');
+
+
+        const detalles = cartState.map(item => ({
+            color_nombre: item.title,
+            cantidad: item.quantity
+        }));
+
+        return {
+            remitente_nombre: formState.sender.name || '',
+            remitente_apellido: formState.sender.lastname || '',
+            remitente_pseudonimo: formState.sender.nickname || '',
+            remitente_curso: formState.sender.course || '',
+            remitente_anonimo: formState.sender.anonymous,
+            destinatario_nombre: formState.recipient.name || '',
+            destinatario_apellido: formState.recipient.lastname || '',
+            destinatario_pseudonimo: formState.recipient.nickname || '',
+            destinatario_curso: formState.recipient.course || '',
+            total_a_pagar: totalPrice,
+            dedicatoria: cartState.find(item => item.message)?.message || null,
+            foto: photoUrl,
+            detalles: filteredCartState.map(item => ({
+                color_nombre: item.title, // Esto asume que 'title' corresponde a un color válido
+                cantidad: item.quantity
+            }))
+        };
+    }
 ;
 
     // Función para renderizar los datos del formulario en el DOM
@@ -127,8 +197,6 @@ import Layout from "../layouts/Layout.astro";
         recipientNickname.textContent = formState.recipient.nickname || 'No especificado';
         recipientCourse.textContent = formState.recipient.course || 'No especificado';
     }
-
-    let totalRoses = 0;
 
     // Función para calcular el total a pagar
     function calculateTotalPrice() {
@@ -214,10 +282,72 @@ import Layout from "../layouts/Layout.astro";
 
     // Finalizar y limpiar los datos
     const finalizeButton = document.getElementById('finalize-button') as HTMLButtonElement;
-    finalizeButton.addEventListener('click', () => {
-        clearCart();
-        clearFormData();
-        alert('Tu reserva ha sido finalizada.');
-        window.location.reload(); // Recargar la página para actualizar el estado
+
+    // Función para convertir una cadena base64 a un archivo tipo File
+    function base64ToFile(base64: string, filename: string): File {
+        const arr = base64.split(',');
+        const mimeMatch = arr[0].match(/:(.*?);/);
+        const mime = mimeMatch ? mimeMatch[1] : ''; // Asegurarse que mime no sea null
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+
+        return new File([u8arr], filename, { type: mime });
+    }
+
+
+    // Actualizar la lógica del botón finalize para manejar imágenes en base64
+    finalizeButton.addEventListener('click', async () => {
+        try {
+            const cartState = cartItems.get();
+            const rosaConDedicatoria = cartState.find(item => item.title === 'Rosa con dedicatoria');
+
+            let photoUrl: string | null = null;
+
+            // Si `photo` es una cadena base64, convertirla en un archivo `File`
+            if (rosaConDedicatoria?.photo && rosaConDedicatoria.photo.startsWith('data:image/')) {
+                console.log('Convirtiendo base64 a archivo...');
+                const file = base64ToFile(rosaConDedicatoria.photo, `from${senderName.textContent}-to${recipientName.textContent}-at${new Date().toString()}.jpg`);
+                console.log('Subiendo la foto a Firebase...');
+                photoUrl = await uploadPhotoAndGetUrl(file);
+                console.log('Foto subida a Firebase, URL:', photoUrl);
+            } else if (typeof rosaConDedicatoria?.photo === 'string') {
+                // Si la foto ya es una URL (string), simplemente úsala
+                photoUrl = rosaConDedicatoria.photo;
+                console.log('Usando la URL de la foto existente:', photoUrl);
+            }
+
+            const reservationData = await createReservationJson(photoUrl);
+
+            const response = await fetch('http://localhost:4000/reserve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reservationData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+
+            const result = await response.json();
+            console.log('Reserva creada exitosamente:', result);
+
+            alert('Tu reserva ha sido finalizada exitosamente');
+            // clearCart();
+            // clearFormData();
+            // window.location.reload();
+        } catch (error) {
+            console.error('Error al finalizar la reserva:', error);
+            alert('Error al finalizar la reserva');
+        }
     });
+
+
+
 </script>
