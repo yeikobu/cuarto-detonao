@@ -403,7 +403,7 @@ import Warn from "../components/icons/Warn.astro";
         try {
             const cartState = cartItems.get();
             const rosaConDedicatoria = cartState.find(item => item.title === 'Rosa con dedicatoria');
-            const apiUrl = "https://cuarto-detonao-backend.onrender.com";
+            const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
 
             showLoadingMessage();
 
@@ -418,7 +418,6 @@ import Warn from "../components/icons/Warn.astro";
                 photoUrl = rosaConDedicatoria.photo;
             }
 
-            console.log('Photo URL:', photoUrl);
             const reservationData = await createReservationJson(photoUrl || "");
 
             const response = await fetch(`${apiUrl}/reserve`, {
