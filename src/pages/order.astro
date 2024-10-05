@@ -421,7 +421,7 @@ import Warn from "../components/icons/Warn.astro";
             console.log('Photo URL:', photoUrl);
             const reservationData = await createReservationJson(photoUrl || "");
 
-            const response = await fetch(`${apiUrl}/reserve`, {
+            const response = await fetch(`${apiUrl}reserve`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
