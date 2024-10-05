@@ -46,7 +46,7 @@ import ChevronRigth from "../components/icons/ChevronRigth.astro"
             <a href="/data" class="bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600 text-transparent bg-clip-text font-bold">Continuar sin foto</a>
         </div>
 
-        <section id="bottom-sheet" class="md:w-3/5 w-full sticky bottom-5 flex flex-col justify-center gap-y-4 p-4 rounded-3xl bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0 ">
+        <section id="bottom-sheet" class="hidden md:w-3/5 w-full sticky bottom-5  flex-col justify-center gap-y-4 p-4 rounded-3xl bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0 ">
             <div class="flex flex-row items-center justify-center">
                 <div class="flex flex-col w-full justify-between gap-1">
                     <div class="flex flex-row items-center justify-between text-xs font-semibold text-gray-300">
@@ -200,6 +200,8 @@ import ChevronRigth from "../components/icons/ChevronRigth.astro"
         // Comprobar que el mensaje no está vacío y la imagen ha sido seleccionada (el preview no tiene la clase 'hidden')
         if (message.value !== '' && !preview.classList.contains('hidden')) {
             // Mostrar el Bottom Sheet
+            bottomSheet.classList.remove("hidden");
+            bottomSheet.classList.add("flex");
             bottomSheet.classList.remove("opacity-0");
             bottomSheet.classList.remove("translate-y-24");
             bottomSheet.classList.add("translate-y-0");
@@ -212,6 +214,9 @@ import ChevronRigth from "../components/icons/ChevronRigth.astro"
             bottomSheet.classList.remove("translate-y-0");
             bottomSheet.classList.add("translate-y-24");
             bottomSheet.classList.add("opacity-0");
+
+            bottomSheet.classList.remove("flex");
+            bottomSheet.classList.add("hidden");
 
             continueWithoutPhoto.classList.remove("hidden"); // Mostrar la opción de continuar sin foto
         }
