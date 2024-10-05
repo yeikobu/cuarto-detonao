@@ -1,5 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Loader from "../components/icons/Loader.astro";
+import Check from "../components/icons/Check.astro";
+import Warn from "../components/icons/Warn.astro";
 ---
 
 <Layout title="Resumen de tu reserva">
@@ -89,12 +92,50 @@ import Layout from "../layouts/Layout.astro";
         <button id="finalize-button" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950/80 via-purple-900/90 to-purple-950/90 rounded-xl font-bold backdrop-blur-sm">
             Finalizar y reservar
         </button>
+
+        <div id="loading-message" class="hidden justify-center items-center fixed w-screen min-h-screen -top-20 inset-0 bg-black/30 z-40">
+            <!-- Mensaje de creando reserva -->
+            <div id="creating-reserve-message" class="w-80 absolute flex flex-col justify-center items-center gap-y-3 p-4 rounded-2xl border-2 border-neutral-900/60 bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0">
+                <Loader class="size-14 animate-spin text-purple-700" />
+                <p class="text-lg font-semibold">Creando reserva...</p>
+            </div>
+
+            <!-- Mensaje de reserva creada -->
+            <div id="reserve-created-message" class="w-80 absolute flex flex-col justify-center items-center gap-y-3 p-4 mx-6 rounded-2xl border-2 border-neutral-900/60 bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0">
+                <div class="flex flex-col items-center justify-center">
+                    <Check class="size-14 text-green-700" />
+                    <p class="text-lg font-semibold">¡Reserva creada exitosamente!</p> 
+                    <p>Por favor, guarda tu número de reserva</p>
+                </div>
+
+                <p>Número de reserva: <span id="reservation-number" class="font-black">30</span></p>
+
+                <button id="button-accept-reservation" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950/80 via-purple-900/90 to-purple-950/90 rounded-xl font-bold backdrop-blur-sm z-50">
+                    <a href="/">Aceptar</a>
+                </button>
+            </div>
+
+            <!-- Mensaje de error al crear reserva -->
+            <div id="reserve-error-message" class="hidden w-80 absolute flex-col justify-center items-center gap-y-3 p-4 mx-6 rounded-2xl border-2 border-neutral-900/60 bg-neutral-950/70 backdrop-blur-lg shadow-xl shadow-black ease-out transition-all translate-y-24 opacity-0">
+                <div class="flex flex-col items-center justify-center">
+                    <Warn class="size-12 text-red-700" />
+                    <p class="text-lg font-semibold">¡Hubo un error al crear la reserva!</p> 
+                    <p>Por favor, vuelve a intentarlo más tarde</p>
+                </div>
+
+                <button id="button-accept-error" class="flex items-center justify-center py-3 px-5 bg-gradient-to-r from-purple-950/80 via-purple-900/90 to-purple-950/90 rounded-xl font-bold backdrop-blur-sm">
+                    Aceptar
+                </button>
+            </div>
+        </div>
     </main>
 </Layout>
 
 <script>
     import { formData, clearFormData } from "../stores/formStore";
     import { cartItems, clearCart } from "../stores/cartStore";
+    import { app } from "../firebase/client";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
     const senderName = document.getElementById('sender-name') as HTMLParagraphElement;
     const senderLastname = document.getElementById('sender-lastname') as HTMLParagraphElement;
@@ -110,6 +151,74 @@ import Layout from "../layouts/Layout.astro";
     const totalToPayPhoto = document.getElementById('total-to-pay-photo') as HTMLParagraphElement;
 
     const cartState = cartItems.get();
+    // Inicializar Firebase Storage
+    const storage = getStorage(app);
+
+    let totalRoses = 0;
+
+    interface CartItem {
+        title: string;
+        quantity: number;
+        photo?: File | string; // Permitir que sea un File o una URL de string
+        message?: string;
+    }
+
+    interface FormData {
+        sender: {
+            name: string;
+            lastname: string;
+            nickname?: string;
+            course: string;
+            anonymous: boolean;
+        };
+        recipient: {
+            name: string;
+            lastname: string;
+            nickname?: string;
+            course: string;
+        };
+    }
+
+    // Función para subir la foto si es un archivo y obtener la URL
+    async function uploadPhotoAndGetUrl(file: File): Promise<string | null> {
+        if (!file) return null;
+        const storageRef = ref(storage, `fotos/${file.name}`);
+        const snapshot = await uploadBytes(storageRef, file);
+        return await getDownloadURL(snapshot.ref);
+    }
+
+    // Función para crear el JSON de la reserva
+    // Función para crear el JSON de la reserva
+    async function createReservationJson(photoUrl: string) {
+        const formState = formData.get() as FormData;
+        const cartState = cartItems.get() as CartItem[];
+        const filteredCartState = cartState.filter(item => item.title !== 'Rosa con dedicatoria');
+
+
+        const detalles = cartState.map(item => ({
+            color_nombre: item.title,
+            cantidad: item.quantity
+        }));
+
+        return {
+            remitente_nombre: formState.sender.name || '',
+            remitente_apellido: formState.sender.lastname || '',
+            remitente_pseudonimo: formState.sender.nickname || '',
+            remitente_curso: formState.sender.course || '',
+            remitente_anonimo: formState.sender.anonymous,
+            destinatario_nombre: formState.recipient.name || '',
+            destinatario_apellido: formState.recipient.lastname || '',
+            destinatario_pseudonimo: formState.recipient.nickname || '',
+            destinatario_curso: formState.recipient.course || '',
+            total_a_pagar: totalPrice,
+            dedicatoria: cartState.find(item => item.message)?.message || null,
+            foto: photoUrl,
+            detalles: filteredCartState.map(item => ({
+                color_nombre: item.title, // Esto asume que 'title' corresponde a un color válido
+                cantidad: item.quantity
+            }))
+        };
+    }
 ;
 
     // Función para renderizar los datos del formulario en el DOM
@@ -127,8 +236,6 @@ import Layout from "../layouts/Layout.astro";
         recipientNickname.textContent = formState.recipient.nickname || 'No especificado';
         recipientCourse.textContent = formState.recipient.course || 'No especificado';
     }
-
-    let totalRoses = 0;
 
     // Función para calcular el total a pagar
     function calculateTotalPrice() {
@@ -214,10 +321,134 @@ import Layout from "../layouts/Layout.astro";
 
     // Finalizar y limpiar los datos
     const finalizeButton = document.getElementById('finalize-button') as HTMLButtonElement;
-    finalizeButton.addEventListener('click', () => {
-        clearCart();
-        clearFormData();
-        alert('Tu reserva ha sido finalizada.');
-        window.location.reload(); // Recargar la página para actualizar el estado
+
+    // Función para convertir una cadena base64 a un archivo tipo File
+    function base64ToFile(base64: string, filename: string): File {
+        const arr = base64.split(',');
+        const mimeMatch = arr[0].match(/:(.*?);/);
+        const mime = mimeMatch ? mimeMatch[1] : ''; // Asegurarse que mime no sea null
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+
+        return new File([u8arr], filename, { type: mime });
+    }
+
+    function showLoadingMessage() {
+        const loadingMessage = document.getElementById('loading-message') as HTMLElement;
+        loadingMessage.classList.add('flex')
+        loadingMessage.classList.remove('hidden'); // Mostrar mensaje
+
+        const creatingReserveMessage = document.getElementById('creating-reserve-message') as HTMLElement;
+        creatingReserveMessage.classList.remove('opacity-0');
+        creatingReserveMessage.classList.remove('translate-y-24');
+        creatingReserveMessage.classList.add('translate-y-0');
+    }
+
+    function showCreatedReserveMessage() {
+        // Muestra mensaje de creando reserva
+        const creatingReserveMessage = document.getElementById('creating-reserve-message') as HTMLElement;
+        creatingReserveMessage.classList.add('opacity-0');
+        creatingReserveMessage.classList.add('hidden');
+
+        //Muestra mensaje de reserva creada
+        const reserveCreatedMeesage = document.getElementById('reserve-created-message') as HTMLElement;
+        reserveCreatedMeesage.classList.remove('opacity-0');
+        reserveCreatedMeesage.classList.remove('translate-y-24');
+        reserveCreatedMeesage.classList.add('translate-y-0');
+
+        const buttonAcceptReservation = document.getElementById('button-accept-reservation') as HTMLButtonElement;
+
+        buttonAcceptReservation.addEventListener('click', () => {
+            console.log("tap");
+            clearCart();
+            clearFormData();
+        });
+    }
+
+    function showErrorMessage() {
+        const loadingMessage = document.getElementById('loading-message') as HTMLElement;
+        loadingMessage.classList.add('flex')
+        loadingMessage.classList.remove('hidden');
+
+        //Muestra mensaje de error al crear reserva
+        const reserveErrorMessage = document.getElementById('reserve-error-message') as HTMLElement;
+        reserveErrorMessage.classList.remove('hidden');
+        reserveErrorMessage.classList.add('flex');
+        reserveErrorMessage.classList.remove('opacity-0');
+        reserveErrorMessage.classList.remove('translate-y-24');
+        reserveErrorMessage.classList.add('translate-y-0');
+
+        const buttonAcceptError = document.getElementById('button-accept-error') as HTMLButtonElement;
+
+        // Evento para aceptar el mensaje de error
+        buttonAcceptError.addEventListener('click', () => {
+            loadingMessage.classList.remove('flex')
+            loadingMessage.classList.add('hidden');
+
+            reserveErrorMessage.classList.add('opacity-0');
+            reserveErrorMessage.classList.add('translate-y-24');
+            reserveErrorMessage.classList.remove('translate-y-0');
+            reserveErrorMessage.classList.add('hidden');
+            reserveErrorMessage.classList.remove('flex');
+        });
+    }
+
+    // Actualizar la lógica del botón finalize para manejar imágenes en base64
+    finalizeButton.addEventListener('click', async () => {
+        try {
+            const cartState = cartItems.get();
+            const rosaConDedicatoria = cartState.find(item => item.title === 'Rosa con dedicatoria');
+            const apiUrl = import.meta.env.PUBLIC_API_URL;
+
+            showLoadingMessage();
+
+            let photoUrl: string | null = null;
+
+            // Si `photo` es una cadena base64, convertirla en un archivo `File`
+            if (rosaConDedicatoria?.photo && rosaConDedicatoria.photo.startsWith('data:image/')) {
+                console.log('Convirtiendo base64 a archivo...');
+                const file = base64ToFile(rosaConDedicatoria.photo, `from${senderName.textContent}${senderLastname.textContent}-to${recipientName.textContent}${recipientLastname.textContent}-at${new Date().toString()}.jpg`);
+                console.log('Subiendo la foto a Firebase...');
+                photoUrl = await uploadPhotoAndGetUrl(file);
+                console.log('Foto subida a Firebase, URL:', photoUrl);
+            } else if (typeof rosaConDedicatoria?.photo === 'string') {
+                // Si la foto ya es una URL (string), simplemente úsala
+                photoUrl = rosaConDedicatoria.photo;
+                console.log('Usando la URL de la foto existente:', photoUrl);
+            }
+
+            console.log('Photo URL:', photoUrl);
+            const reservationData = await createReservationJson(photoUrl || "");
+
+            const response = await fetch(`${apiUrl}/reserve`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...reservationData,
+                    foto_url: photoUrl 
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+
+            const result = await response.json();
+            const numberOfReservation = document.getElementById('reservation-number') as HTMLParagraphElement;
+            numberOfReservation.textContent = result.numero_reserva.toString();
+            showCreatedReserveMessage();
+        } catch (error) {
+            showErrorMessage();
+        }
     });
+
+
+
 </script>
