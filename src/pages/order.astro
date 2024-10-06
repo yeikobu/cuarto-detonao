@@ -149,6 +149,7 @@ import Warn from "../components/icons/Warn.astro";
     const totalPriceElement = document.getElementById('total-price') as HTMLParagraphElement;
     const totalToPayRoses = document.getElementById('total-to-pay-roses') as HTMLParagraphElement;
     const totalToPayPhoto = document.getElementById('total-to-pay-photo') as HTMLParagraphElement;
+    const finalizeButton = document.getElementById('finalize-button') as HTMLButtonElement;
 
     const cartState = cartItems.get();
     // Inicializar Firebase Storage
@@ -178,6 +179,7 @@ import Warn from "../components/icons/Warn.astro";
             course: string;
         };
     }
+
 
     // Función para subir la foto si es un archivo y obtener la URL
     async function uploadPhotoAndGetUrl(file: File): Promise<string | null> {
@@ -319,8 +321,9 @@ import Warn from "../components/icons/Warn.astro";
     renderFormData();
     renderCartItems();
 
-    // Finalizar y limpiar los datos
-    const finalizeButton = document.getElementById('finalize-button') as HTMLButtonElement;
+    if (cartState.length === 0) {
+        finalizeButton.classList.add('hidden');
+    }
 
     // Función para convertir una cadena base64 a un archivo tipo File
     function base64ToFile(base64: string, filename: string): File {
@@ -435,6 +438,7 @@ import Warn from "../components/icons/Warn.astro";
                 throw new Error('Error en la respuesta del servidor');
             }
 
+            finalizeButton.classList.add('hidden');
             const result = await response.json();
             const numberOfReservation = document.getElementById('reservation-number') as HTMLParagraphElement;
             numberOfReservation.textContent = result.numero_reserva.toString();
