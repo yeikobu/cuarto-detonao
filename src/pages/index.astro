@@ -20,14 +20,37 @@ await fetch('https://cuarto-detonao-backend.onrender.com/', {
 		<SectionContainer>
 			<div class="flex flex-col items-center justify-center space-y-4 text-pretty">
 				<p class="text-xl font-semibold">Cada color de rosa tiene un significado poderoso y único</p>
-				<ul class="space-y-2">
-					<li><span class="font-extrabold">Rojo:</span> Te amo ❤️</li>
-					<li><span class="font-extrabold">Anaranjado con Puntas Rojas:</span> Te deseo 🔥</li>
-					<li><span class="font-extrabold">Morado:</span> Te admiro 💜</li>
-					<li><span class="font-extrabold">Azul:</span> Eres maravillosamente diferente 💙</li>
-					<li><span class="font-extrabold">Blanco:</span> Lealtad 🤍</li>
-					<li><span class="font-extrabold">Amarillo:</span> Un profesor como usted se lleva en el corazón para siempre 💛</li>
-				</ul>
+				<div class="flex flex-col items-start justify-center w-full max-w-lg p-4 border-2 border-neutral-900/80 bg-neutral-950/80 rounded-2xl space-y-2">
+					<div class="flex flex-row justify-between items-center w-full">
+						<strong>Roja:</strong>
+						<p>Te amo ❤️</p>
+					</div>
+					<hr class="border-neutral-900/90 w-full" />
+					<div class="flex flex-row justify-between items-center w-full">
+						<strong class="text-start">Anaranjada con puntas Rojas:</strong>
+						<p  class="text-end">Te deseo🔥</p>
+					</div>
+					<hr class="border-neutral-900/90 w-full" />
+					<div class="flex flex-row justify-between items-center w-full">
+						<strong>Morada:</strong>
+						<p> Te admiro 💜</p>
+					</div>
+					<hr class="border-neutral-900/90 w-full" />
+					<div class="flex flex-row justify-between items-center w-full">
+						<strong>Azul:</strong>
+						<p class="text-end">Eres maravillosamente diferente 💙</p>
+					</div>
+					<hr class="border-neutral-900/90 w-full" />
+					<div class="flex flex-row justify-between items-center w-full">
+						<strong>Blanca:</strong>
+						<p>Lealtad 🤍</p>
+					</div>
+					<hr class="border-neutral-900/90 w-full" />
+					<div class="flex flex-row justify-between items-center w-full">
+						<strong>Amarilla:</strong>
+						<p class="text-end"> Un profesor como usted se lleva en el corazón para siempre 💛</p>
+					</div>
+				</div>
 			</div>
 		</SectionContainer>
 
