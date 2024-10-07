@@ -4,10 +4,6 @@ import NextButton from '../components/NextButton.astro';
 import SectionContainer from '../components/SectionContainer.astro';
 import ChevronRigth from '../components/icons/ChevronRigth.astro';
 import "@fontsource-variable/onest";
-
-await fetch('https://cuarto-detonao-backend.onrender.com/', {	
-	method: 'GET',
-})
 ---
 
 <Layout title="Bienvenido a las rosas del IV° Detonao">
@@ -68,3 +64,9 @@ await fetch('https://cuarto-detonao-backend.onrender.com/', {
 		
 	</main>
 </Layout>
+
+<script>
+	await fetch('https://cuarto-detonao-backend.onrender.com/', {	
+		method: 'GET',
+	})
+</script>
