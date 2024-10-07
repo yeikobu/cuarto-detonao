@@ -6,6 +6,17 @@ interface Props {
 }
 
 const { title } = Astro.props;
+
+const targetDate = new Date("2024-10-06T23:59:59").getTime(); // Fecha de ejemplo, cámbiala según tus necesidades
+
+function checkTimeRemaining() { 
+	const now = new Date().getTime();
+	const timeRemaining = targetDate - now;
+
+	return timeRemaining < 0;
+}
+
+const isThereTimeRemaining = checkTimeRemaining();
 ---
 
 <!doctype html>
@@ -20,7 +31,13 @@ const { title } = Astro.props;
 	</head>
 	<body class="md:max-w-3xl max-w-md h-full md:h-full flex flex-col items-center justify-center mx-auto">
 		<Header />
-		<slot />
+		{ isThereTimeRemaining ? <slot /> : 
+		<div class="flex flex-col items-center justify-center text-center pt-20 px-10 min-h-[60vh] md:min-h-[70vh] text-balance space-y-10">
+			<h1 class="text-xl font-bold">Ha finalizado el tiempo de reservas</h1>
+
+			<h2 class="text-2xl font-bold">Las rosas serán entrgadas el día 12 de noviembre</h2>
+		</div>
+		}
 		<Footer />
 	</body>
 </html>
