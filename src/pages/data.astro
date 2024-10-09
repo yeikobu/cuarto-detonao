@@ -39,16 +39,19 @@ const courses = [
                     <div class="flex flex-col justify-center items-start">
                         <label for="sender-name" class="text-left">Nombre (obligatorio)</label>
                         <input id="sender-name" type="text" class="border-2 border-gray-300 p-2 rounded-lg w-full focus:border-purple-800" placeholder="Ingresa tu nombre" required>
+                        <div id="sender-name-lenght-warning" class="hidden text-xs w-full"></div>
                     </div>
 
                     <div class="flex flex-col justify-center items-start">
                         <label for="sender-lastname" class="text-left">Apellido (obligatorio)</label>
                         <input id="sender-lastname" type="text" class="border-2 border-gray-300 p-2 rounded-lg w-full focus:border-purple-800" placeholder="Ingresa tu apellido" required>
+                        <div id="sender-lastname-lenght-warning" class="hidden text-xs w-full text-stone-300"></div>
                     </div>
 
                     <div class="flex flex-col justify-center items-start">
                         <label for="sender-nickname" class="text-left">Pseudónimo (opcional)</label>
                         <input id="sender-nickname" type="text" class="border-2 border-gray-300 p-2 rounded-lg w-full focus:border-purple-800" placeholder="Ingresa un pseudónimo (opcional)">
+                        <div id="sender-nickname-lenght-warning" class="hidden text-xs w-full"></div>
                     </div>
 
                     <div class="flex flex-col justify-center items-start">
@@ -142,12 +145,12 @@ const courses = [
             continueButton.classList.add('hidden');
         }
     }
-   
-    const currentForm = formData.get();
 
     function capitalizeFirstLetter(text: string) {
         return text.charAt(0).toUpperCase() + text.slice(1);
     }
+
+    const currentForm = formData.get();
 
     if (currentForm?.sender) {
         senderName.value = currentForm?.sender?.name || "";
@@ -170,10 +173,43 @@ const courses = [
         receiverCourse.classList.remove('hidden');
     }
 
-    // Agregar eventos de input para verificar en tiempo real
-    senderName.addEventListener('input', checkFields);
-    senderLastname.addEventListener('input', checkFields);
-    senderNickname.addEventListener('input', checkFields);
+    const fieldsMaxLength = 20;
+
+    function checkTextLength(inputElement: HTMLInputElement, warningElement: HTMLElement) {
+        const currentLength = inputElement.value.length;
+        const remainingChars = Math.max(0, fieldsMaxLength - currentLength);
+
+        if (currentLength >= fieldsMaxLength - 12) {
+            warningElement.classList.remove('hidden');
+            warningElement.innerHTML = `<p class="text-end w-full text-stone-300">${remainingChars} caracteres restantes</p>`;
+            
+            if (currentLength > fieldsMaxLength) {
+                inputElement.value = inputElement.value.substring(0, fieldsMaxLength);
+            }
+        } else {
+            warningElement.classList.add('hidden');
+        }
+    }
+
+    const senderNameWarning = document.getElementById('sender-name-lenght-warning') as HTMLElement;
+    const senderLastnameWarning = document.getElementById('sender-lastname-lenght-warning') as HTMLElement;
+    const senderNicknameWarning = document.getElementById('sender-nickname-lenght-warning') as HTMLElement;
+
+    senderName.addEventListener('input', () => { 
+        checkTextLength(senderName, senderNameWarning);
+        checkFields();
+    });
+
+    senderLastname.addEventListener('input', () => { 
+        checkTextLength(senderLastname, senderLastnameWarning);
+        checkFields();
+    });
+
+    senderNickname.addEventListener('input', () => { 
+        checkTextLength(senderNickname, senderNicknameWarning);
+        checkFields();
+    });
+
     senderCourse.addEventListener('input', checkFields);
     receiverName.addEventListener('input', checkFields);
     receiverLastname.addEventListener('input', checkFields);
