@@ -145,6 +145,10 @@ const courses = [
    
     const currentForm = formData.get();
 
+    function capitalizeFirstLetter(text: string) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
     if (currentForm?.sender) {
         senderName.value = currentForm?.sender?.name || "";
         senderLastname.value = currentForm?.sender?.lastname || "";
@@ -180,16 +184,16 @@ const courses = [
     continueButton.addEventListener('click', () => {
         const newFormData = {
             sender: {
-                name: senderName.value,
-                lastname: senderLastname.value,
-                nickname: senderNickname.value,
+                name: capitalizeFirstLetter(senderName.value), 
+                lastname: capitalizeFirstLetter(senderLastname.value),
+                nickname: capitalizeFirstLetter(senderNickname.value),
                 course: senderCourse.value,
                 anonymous: senderAnonymous.checked
             },
             recipient: {
-                name: receiverName.value,
-                lastname: receiverLastname.value,
-                nickname: receiverNickname.value,
+                name: capitalizeFirstLetter(receiverName.value),
+                lastname: capitalizeFirstLetter(receiverLastname.value),
+                nickname: capitalizeFirstLetter(receiverNickname.value),
                 course: receiverCourse.value
             }
         };
