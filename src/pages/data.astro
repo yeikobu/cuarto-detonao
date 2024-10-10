@@ -82,16 +82,19 @@ const courses = [
                     <div class="flex flex-col justify-center items-start">
                         <label for="receiver-name" class="text-left">Nombre (obligatorio)</label>
                         <input id="receiver-name" type="text" class="border-2 border-gray-300 p-2 rounded-lg w-full focus:border-purple-800" placeholder="Ingresa su nombre" required>
+                        <div id="receiver-name-lenght-warning" class="hidden text-xs w-full"></div>
                     </div>
 
                     <div class="flex flex-col justify-center items-start">
                         <label for="receiver-lastname" class="text-left">Apellido (obligatorio)</label>
                         <input id="receiver-lastname" type="text" class="border-2 border-gray-300 p-2 rounded-lg w-full focus:border-purple-800" placeholder="Ingresa su apellido " required>
+                        <div id="receiver-lastname-lenght-warning" class="hidden text-xs w-full"></div>
                     </div>
 
                     <div class="flex flex-col justify-center items-start">
                         <label for="receiver-nickname" class="text-left">Pseudónimo (opcional)</label>
                         <input id="receiver-nickname" type="text" class="border-2 border-gray-300 p-2 rounded-lg w-full focus:border-purple-800" placeholder="Ingresa su pseudónimo (opcional)">
+                        <div id="receiver-nickname-lenght-warning" class="hidden text-xs w-full"></div>
                     </div>
 
                     <div class="flex flex-col justify-center items-start">
@@ -194,6 +197,9 @@ const courses = [
     const senderNameWarning = document.getElementById('sender-name-lenght-warning') as HTMLElement;
     const senderLastnameWarning = document.getElementById('sender-lastname-lenght-warning') as HTMLElement;
     const senderNicknameWarning = document.getElementById('sender-nickname-lenght-warning') as HTMLElement;
+    const receiverNameWarning = document.getElementById('receiver-name-lenght-warning') as HTMLElement;
+    const receiverLastnameWarning = document.getElementById('receiver-lastname-lenght-warning') as HTMLElement;
+    const receiverNicknameWarning = document.getElementById('receiver-nickname-lenght-warning') as HTMLElement;
 
     senderName.addEventListener('input', () => { 
         checkTextLength(senderName, senderNameWarning);
@@ -211,11 +217,24 @@ const courses = [
     });
 
     senderCourse.addEventListener('input', checkFields);
-    receiverName.addEventListener('input', checkFields);
-    receiverLastname.addEventListener('input', checkFields);
-    receiverNickname.addEventListener('input', checkFields);
-    receiverCourse.addEventListener('input', checkFields);
     senderAnonymous.addEventListener('click', checkFields);
+
+    receiverName.addEventListener('input', () => { 
+        checkTextLength(receiverName, receiverNameWarning);
+        checkFields();
+    });
+
+    receiverLastname.addEventListener('input', () => { 
+        checkTextLength(receiverLastname, receiverLastnameWarning);
+        checkFields();
+    });
+
+    receiverNickname.addEventListener('input', () => {
+        checkTextLength(receiverNickname, receiverNicknameWarning);
+        checkFields();
+    });
+    
+    receiverCourse.addEventListener('input', checkFields);
 
     continueButton.addEventListener('click', () => {
         const newFormData = {
