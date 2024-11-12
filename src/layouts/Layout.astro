@@ -8,7 +8,7 @@ interface Props {
 const { title } = Astro.props;
 
 function checkTimeRemaining() { 
-	const targetDate = new Date("2024-11-11T23:59:59").getTime();
+	const targetDate = new Date("2024-12-11T01:59:59").getTime();
 	const now = new Date().getTime();
 	const timeRemaining = targetDate - now;
 
@@ -34,7 +34,7 @@ const isThereTimeRemaining = checkTimeRemaining();
 		<div class="flex flex-col items-center justify-center text-center pt-20 px-10 min-h-[60vh] md:min-h-[70vh] text-balance space-y-10">
 			<h1 class="text-xl font-bold">Ha finalizado el tiempo de reservas</h1>
 
-			<h2 class="text-2xl font-bold">Las rosas serán entrgadas el día 7 y 8 de noviembre</h2>
+			<h2 class="text-2xl font-bold">Las rosas serán entrgadas el día 14 y 15 de noviembre</h2>
 		</div>
 		}
 		<Footer />
