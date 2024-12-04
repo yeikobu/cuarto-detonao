@@ -8,9 +8,10 @@ interface Props {
 const { title } = Astro.props;
 
 function checkTimeRemaining() { 
-	const targetDate = new Date("2024-11-12T01:59:59").getTime();
-	const now = new Date().getTime();
-	const timeRemaining = targetDate - now;
+	const now = new Date();
+	const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 59).getTime();
+	
+	const timeRemaining = targetDate - now.getTime();
 
 	return timeRemaining > 0;
 }

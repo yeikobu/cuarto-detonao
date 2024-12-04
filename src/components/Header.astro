@@ -24,12 +24,13 @@
     const countdownElement = document.getElementById('countdown') as HTMLParagraphElement;
 
     // Fecha de finalización de las reservas
-    const targetDate = new Date("2024-11-12T01:59:59").getTime(); // Fecha de ejemplo, cámbiala según tus necesidades
+
 
     // Función que calcula el tiempo restante
     function updateCountdown() {
-        const now = new Date().getTime();
-        const timeRemaining = targetDate - now;
+        const now = new Date();
+        const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 59).getTime();
+        const timeRemaining = targetDate - now.getTime();
 
         if (timeRemaining > 0) {
             const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
@@ -59,6 +60,7 @@
                 </div>
 
                 <p class="text-xs text-stone-300"> Para finalizar las reservas</p>
+                <p class="text-xs text-stone-500 italic"> Importante: Este proyecto ya cumplió su ciclo de vida con éxito. <br> Por lo tanto, el backend y la base de datos, no se encuentran en funcionamiento.</p>
             </div>
             `;
         } else {
